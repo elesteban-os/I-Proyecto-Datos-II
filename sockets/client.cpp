@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     // Winsock 
     num = WSAStartup(MAKEWORD(2,2), &wsaData);
     if (num != 0) {
-        printf("WSAStartup error");
+        printf("WSAStartup error1");
         return 1;
     }
 
