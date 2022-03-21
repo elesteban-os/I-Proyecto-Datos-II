@@ -17,10 +17,6 @@ int main(int argc, char **argv) {
     WSADATA wsaData;
     int num, num2;
     int clientSocket = 0;
-    struct addrinfo *res = NULL,
-                    *ptr = NULL,
-                    hints;
-    const char *message = "Hello, world!";
     int recBufferLen = 1024;
     char recBuffer[recBufferLen];
 
