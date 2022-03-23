@@ -6,12 +6,15 @@
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <pthread.h>
+#include <thread>
 #include <string.h>
+#include <iostream>
 
 #pragma comment (lib, "wsock.lib")
 
 #define PORT_PORT 1337
+
+using std::this_thread::sleep_for;
 
 class Server {
     private:
@@ -24,8 +27,36 @@ class Server {
         int serverSocket = 0;
         int clients[2];
         int i = 0;
+        char lastMessage[1024];   
+        std::thread t; 
 
-    public:
+        void writeLastMessage(char message[], int len) {
+            memset(lastMessage, 0, len);
+            for (int i = 0; i < len; i++) {
+                 lastMessage[i] = message[i];               
+            }
+        }
+
+        int readClients() {
+            int i = 0;
+            char buffer[1024];
+            int bufferLen = 1024;
+            int num2;
+            while(1) {
+                for (i; i < 2; i++) {
+                    num2 = recv(clients[i], buffer, sizeof(buffer), 0);
+                    if (num2 != -1) {
+                        printf("Mensajes: %s\n", buffer);
+                        writeLastMessage(buffer, num2);
+                        memset(buffer, 0, sizeof(buffer));
+                    } 
+                    num2 = send(clients[i], "recibido", 8, 0);
+                }
+                i = 0;
+                sleep_for(std::chrono::milliseconds(1));
+            }                         
+        }
+
         int wsaCreate() {
             int num = WSAStartup(MAKEWORD(2,2), &WsaData);
             if (num != 0){
@@ -75,29 +106,17 @@ class Server {
 
         int acceptSocket() {
             socklen_t clilen = sizeof(client1);
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 1; i++) {
                 clients[i] = accept(serverSocket, (struct sockaddr *)&client1, &clilen); 
             
             }
             return 0;
         }
 
-        int readClients() {
-            while(1) {
-                for (i; i < 2; i++) {
-                    num2 = recv(clients[i], buffer, sizeof(buffer), 0);
-                    if (num2 != -1) {
-                        printf("Mensajes: %s\n", buffer);
-                        memset(buffer, 0, sizeof(buffer));
-                    }
-                    num2 = send(clients[i], "recibido", 8, 0);
-                }
-                i = 0;
-            }
-            return 0;
+    public:
+        char* getLastMessage() {
+            return lastMessage;
         }
-
-
 
         int startServer() {
             wsaCreate();
@@ -106,8 +125,13 @@ class Server {
             bindServerSocket();
             listenServerSocket();
             acceptSocket();
-            readClients();
-
+            memset(&lastMessage, 0, sizeof(lastMessage));
+            t = std::thread(&Server::readClients, this);
+            printf("Server started");
             return 0;
+        }
+
+        void setZeroesLastMessage() {
+            memset(&lastMessage, 0, sizeof(lastMessage));
         }
 };

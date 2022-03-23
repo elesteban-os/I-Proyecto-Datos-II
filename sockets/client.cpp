@@ -32,22 +32,6 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-
-    /*
-    // Direcciones de red
-    ZeroMemory(&hints, sizeof(hints));
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
-
-    // Get address
-    num = getaddrinfo(argv[1], PORT_PORT, &hints, &res);
-    if (num != 0){
-        printf("Error getaddrinfo");
-        WSACleanup();
-        return 1;
-    } */
-
     // Get host
     num = gethostname(hostname, sizeof(hostname));
     if (num > 0){
@@ -118,65 +102,6 @@ int main(int argc, char **argv) {
     }
     printf(recBuffer);
     memset(recBuffer, 0, recBufferLen);
-
-
-
-    // Intentar conectar a un addr creando socket y conectando (connect)
-
-    /*
-    for(ptr = res; ptr != NULL; ptr = ptr->ai_next) {
-
-        clientSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-        printf("qqqqq");
-
-        if (clientSocket == INVALID_SOCKET) {
-            printf("Error client socket");
-            WSACleanup();
-            return 1;
-        }
-
-        num = connect(clientSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
-
-        if (num == SOCKET_ERROR) {
-            printf("Error connect client socket");
-            closesocket(clientSocket);
-            clientSocket = INVALID_SOCKET;
-            continue;
-        }
-        break;
-    }
-    */
-
-   /*
-    if (clientSocket == INVALID_SOCKET) {
-        printf("Error client socket not connected");
-        WSACleanup();
-        return 1;
-    }
-        
-
-    num2 = recv(clientSocket, recBuffer, recBufferLen, 0);
-    if (num2 == -1) {
-            printf("Error message \n");
-            closesocket(clientSocket);
-            clientSocket = INVALID_SOCKET;
-        
-    }
-
-    printf("Mensajes: %s\n", recBuffer);
-    memset(recBuffer, 0, recBufferLen);
-
-    num2 = recv(clientSocket, recBuffer, recBufferLen, 0);
-    if (num2 == -1) {
-            printf("Error message \n");
-            closesocket(clientSocket);
-            clientSocket = INVALID_SOCKET;
-        
-    }
-    printf("Mensajes: %s\n", recBuffer);
-    memset(recBuffer, 0, recBufferLen);
-    
-    */
 
    return 0;
     
