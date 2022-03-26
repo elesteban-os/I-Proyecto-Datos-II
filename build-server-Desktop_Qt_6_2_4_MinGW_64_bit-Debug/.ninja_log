@@ -1,0 +1,9 @@
+# ninja log v5
+2	1407	6700275551418790	server_autogen/timestamp	feb3e4165ef3bee3
+2	1407	6700275551418790	server_autogen/mocs_compilation.cpp	feb3e4165ef3bee3
+2	1407	6700275551418790	C:/Users/esteb/Documents/GitHub/I-Proyecto-Datos-II/build-server-Desktop_Qt_6_2_4_MinGW_64_bit-Debug/server_autogen/timestamp	feb3e4165ef3bee3
+2	1407	6700275551418790	C:/Users/esteb/Documents/GitHub/I-Proyecto-Datos-II/build-server-Desktop_Qt_6_2_4_MinGW_64_bit-Debug/server_autogen/mocs_compilation.cpp	feb3e4165ef3bee3
+1409	4246	6700275582994380	CMakeFiles/server.dir/server_autogen/mocs_compilation.cpp.obj	48c8d9404e7c2516
+1415	4616	6700275586704460	CMakeFiles/server.dir/main.cpp.obj	1a02d338e1b85dc6
+1418	4787	6700275588419870	CMakeFiles/server.dir/mainwindow.cpp.obj	8fec0bc905ffb6e9
+4788	5146	6700275591970737	server.exe	2b63980e5891c389

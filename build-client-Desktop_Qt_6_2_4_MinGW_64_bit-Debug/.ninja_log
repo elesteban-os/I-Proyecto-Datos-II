@@ -1,0 +1,9 @@
+# ninja log v5
+1	1262	6700275817525257	client_autogen/timestamp	eb7c55c2ad7083f3
+1	1262	6700275817525257	client_autogen/mocs_compilation.cpp	eb7c55c2ad7083f3
+1	1262	6700275817525257	C:/Users/esteb/Documents/GitHub/I-Proyecto-Datos-II/build-client-Desktop_Qt_6_2_4_MinGW_64_bit-Debug/client_autogen/timestamp	eb7c55c2ad7083f3
+1	1262	6700275817525257	C:/Users/esteb/Documents/GitHub/I-Proyecto-Datos-II/build-client-Desktop_Qt_6_2_4_MinGW_64_bit-Debug/client_autogen/mocs_compilation.cpp	eb7c55c2ad7083f3
+1263	4081	6700275848362810	CMakeFiles/client.dir/client_autogen/mocs_compilation.cpp.obj	7a8d0f5feb731383
+1268	4452	6700275852072868	CMakeFiles/client.dir/main.cpp.obj	fba08540c022afc2
+1272	4516	6700275852721133	CMakeFiles/client.dir/mainwindow.cpp.obj	3d2baad4f7cd0b97
+4517	4863	6700275856132033	client.exe	3a88f4f30facbb83
