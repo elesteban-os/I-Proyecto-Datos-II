@@ -1,5 +1,0 @@
-C:/Users/esteb/Documents/GitHub/I-Proyecto-Datos-II/build-client-Desktop_Qt_6_2_4_MinGW_64_bit-Debug/CMakeFiles/client.dir
-C:/Users/esteb/Documents/GitHub/I-Proyecto-Datos-II/build-client-Desktop_Qt_6_2_4_MinGW_64_bit-Debug/CMakeFiles/edit_cache.dir
-C:/Users/esteb/Documents/GitHub/I-Proyecto-Datos-II/build-client-Desktop_Qt_6_2_4_MinGW_64_bit-Debug/CMakeFiles/rebuild_cache.dir
-C:/Users/esteb/Documents/GitHub/I-Proyecto-Datos-II/build-client-Desktop_Qt_6_2_4_MinGW_64_bit-Debug/CMakeFiles/client_autogen_timestamp_deps.dir
-C:/Users/esteb/Documents/GitHub/I-Proyecto-Datos-II/build-client-Desktop_Qt_6_2_4_MinGW_64_bit-Debug/CMakeFiles/client_autogen.dir
