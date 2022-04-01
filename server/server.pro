@@ -16,10 +16,11 @@ LIBS += -std=c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    socket\server.cpp
+    server.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    server.h
 
 FORMS += \
     mainwindow.ui

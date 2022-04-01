@@ -1,12 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "socket/server.cpp"
-
-Server *server1 = new Server();
+#include "server.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , server (new Server)
 {
     ui->setupUi(this);
 }
@@ -20,7 +19,7 @@ void MainWindow::on_startServerBtn_clicked()
 {
     ui->startServerBtn->setEnabled(false);
     ui->logText->appendPlainText("Iniciando server");
-    server1->startServer();
+    server->startServer();
     ui->logText->appendPlainText("Server iniciado");
 }
 
@@ -40,8 +39,8 @@ void MainWindow::on_sendImgBtn_clicked()
 
 
     // Enviar imagen
-    server1->sendMessage("newimage\0", 0);
-    server1->sendMessage(data, 0, size);
+    server->sendMessage("newimage\0", 0);
+    server->sendMessage(data, 0, size);
 
     // Para ver la imagen
     QImage imgdata((uchar*)data, 225, 225, QImage::Format_ARGB32);
