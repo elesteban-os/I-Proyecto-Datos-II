@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "clientsock.h"
+#include <string.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -14,8 +16,15 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void threadData();
+
+private slots:
+    void on_connectBtn_clicked();
+
+    void on_seeImageBtn_clicked();
 
 private:
     Ui::MainWindow *ui;
+    clientSock *client;
 };
 #endif // MAINWINDOW_H

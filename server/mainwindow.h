@@ -15,6 +15,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+
+
+    void on_startServerBtn_clicked();
+
+    void on_sendImgBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

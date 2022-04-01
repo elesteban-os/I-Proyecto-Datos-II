@@ -136,7 +136,15 @@ class Server {
         }
 
         void sendMessage(const char* message, int client) {
-            int err = send(clients[i], message, sizeof(message), 0);
+            num = send(clients[client], message, strlen(message), 0);
+        }
+
+        void sendMessage(char *message, int client) {
+            num = send(clients[client], message, strlen(message), 0);
+        }
+
+        void sendMessage(char *message, int client, int size) {
+            num = send(clients[client], message, size, 0);
         }
 
         void setZeroesLastMessage() {
