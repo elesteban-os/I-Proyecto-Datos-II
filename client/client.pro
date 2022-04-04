@@ -8,6 +8,7 @@ LIBS += -lWs2_32
 LIBS += -lwsock32
 LIBS += -pthread
 LIBS += -std=c++11
+LIBS += -lpsapi
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

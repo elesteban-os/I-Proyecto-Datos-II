@@ -8,18 +8,27 @@ LIBS += -lWs2_32
 LIBS += -lwsock32
 LIBS += -pthread
 LIBS += -std=c++11
+LIBS += -lpsapi
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    card.cpp \
+    linkedcard.cpp \
+    linkedlist.cpp \
     main.cpp \
     mainwindow.cpp \
+    memory.cpp \
     server.cpp
 
 HEADERS += \
+    card.h \
+    linkedcard.h \
+    linkedlist.h \
     mainwindow.h \
+    memory.h \
     server.h
 
 FORMS += \

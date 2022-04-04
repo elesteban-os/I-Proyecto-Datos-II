@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "server.h"
+#include "memory.h"
+#include "card.h"
+#include <string>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,11 +12,29 @@ MainWindow::MainWindow(QWidget *parent)
     , server (new Server)
 {
     ui->setupUi(this);
+    changeMemoryUsageHelper();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::changeMemoryUsageHelper() {
+    std::thread tMemory(&MainWindow::changeMemoryUsage, this);
+    tMemory.detach();
+}
+
+void MainWindow::changeMemoryUsage() {
+    int num;
+    QString numS;
+    while (1) {
+        num = memoryManager.getCurrentMemoryUsage();
+        numS = QString::number(num);
+        numS.append(" Bytes");
+        ui->variableMemoryUsage->setText(numS);
+        sleep_for(std::chrono::milliseconds(1000));
+    }
 }
 
 void MainWindow::on_startServerBtn_clicked()
@@ -26,12 +48,26 @@ void MainWindow::on_startServerBtn_clicked()
 
 void MainWindow::on_sendImgBtn_clicked()
 {
-    QImage img2("descarga.jpg");
+    // Const char para el array
+    const char *imageName = "images/1.jpg";
+
+    // Char para hacer la tarjeta
+    char namee[10];
+
+    // Copia de memoria a la variable para la tarjeta
+    memcpy(namee, imageName, strlen(imageName));
+
+    // Se puede crear imagenes con const char
+    QImage img2(imageName);
 
     // Extraer datos de la imagen.
     int size = img2.sizeInBytes();
     char data[size];
     memcpy(data, img2.bits(), size);
+
+    // Creacion de tarjeta
+    card *card1 = new card(data, size, 0);
+
 
     for (int i = 0; i < 20; i++) {
         printf("%x", data[i]);
@@ -43,7 +79,7 @@ void MainWindow::on_sendImgBtn_clicked()
     server->sendMessage(data, 0, size);
 
     // Para ver la imagen
-    QImage imgdata((uchar*)data, 225, 225, QImage::Format_ARGB32);
+    QImage imgdata((uchar*)card1->getImage(), 100, 100, QImage::Format_ARGB32);
     QPixmap p(QPixmap::fromImage(imgdata));
     ui->label1->setPixmap(p);
 }

@@ -37,8 +37,10 @@ void MainWindow::on_seeImageBtn_clicked()
 {
     char *data = client->getData();
     printf("%s", data);
-    QImage imgdata((uchar*)data, 225, 225, QImage::Format_ARGB32);
+    QImage imgdata((uchar*)data, 100, 100, QImage::Format_ARGB32);
     QPixmap p(QPixmap::fromImage(imgdata));
-    ui->label->setPixmap(p);
+    //ui->label->setPixmap(p);
+    ui->pushButton->setIcon(p);
+    ui->pushButton->setIconSize(QSize(100, 100));
 }
 
