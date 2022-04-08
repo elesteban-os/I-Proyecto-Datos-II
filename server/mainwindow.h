@@ -25,6 +25,7 @@ public:
 
     void changeMemoryUsage();
     void changeMemoryUsageHelper();
+    void inMemoryCardsInfo();
 
 private slots:
     void on_startServerBtn_clicked();
@@ -34,5 +35,7 @@ private:
     Ui::MainWindow *ui;
     Server *server;
     Memory memoryManager;
+    int tableIteration = 0;
+    int tablei = 0;
 };
 #endif // MAINWINDOW_H

@@ -64,19 +64,47 @@ void Memory::startGame() {
     server->startServer();
 }
 
+void Memory::createCardsInfo(char* buffer, int* ids, int size) {
+    char IDchar[5];
+    for (int i = 0; i < size; i++) {
+        std::sprintf(IDchar, "%d", ids[i]);
+        strcat(buffer, IDchar);
+        if (i < size - 1) {
+            strcat(buffer, ", ");
+        }
+    }
+
+}
+
+void Memory::createInDiscCardsInfo() {
+    memset(&inDiscCardsInfo, 0, 20);
+    int size = inMemoryCards.getSize();
+    int cardsSize = 15;
+    cardsSize -= size;
+    int IDarray[cardsSize];
+    int ID = 0;
+    int j = 0;
+    for (int i = 0; i < 15; i++) {
+        ID = inMemoryCards.getID(i);
+        if (ID == -1) {
+            IDarray[j] = i;
+            j++;
+        }
+    }
+    createCardsInfo(inDiscCardsInfo, IDarray, cardsSize);
+    //printf("%d", IDarray);
+}
+
 void Memory::createInMemoryCardsInfo() {
     memset(&inMemoryCardsInfo, 0, 20);
     int ID;
-    char IDchar[5];
-    for (int i = 0; i < inMemoryCards.getSize() - 1; i++) {
+    int cardsSize = inMemoryCards.getSize();
+    int IDarray[cardsSize];
+    for (int i = 0; i < cardsSize; i++) {
         ID = inMemoryCards.getID(i);
-
-        std::sprintf(IDchar, "%d", ID);
-
-        printf("%s", IDchar);
-
-        //strncat(inMemoryCardsInfo, 1, 1);
+        IDarray[i] = ID;
     }
+    createCardsInfo(inMemoryCardsInfo, IDarray, cardsSize);
 }
 
 void Memory::initInMemoryCards() {
@@ -88,14 +116,23 @@ void Memory::initInMemoryCards() {
         char data[size];
         memcpy(data, image.bits(), size);
 
-        printf("%s", "imagen copiada");
+        printf("%s\n", "imagen copiada");
 
         // Agregar a la lista
         inMemoryCards.add(data, size, i);
 
-        printf("%s", "se agrega a la lista");
+        printf("%s\n", "se agrega a la lista");
+        printf("%d\n", inMemoryCards.getSize());
     }
     createInMemoryCardsInfo();
+}
+
+char* Memory::getInMemoryCardsInfo() {
+    return inMemoryCardsInfo;
+}
+
+char* Memory::getInDiscCardsInfo() {
+    return inDiscCardsInfo;
 }
 
 

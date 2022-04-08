@@ -14,7 +14,7 @@ public:
     void add(char* data, int size, int num);
     char* getData(int index);
     int deleteData(int index);
-    int deleteLastData();
+    void deleteLastData();
     int getSize();
     int getID(int index);
 };

@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+
 }
 
 void MainWindow::changeMemoryUsageHelper() {
@@ -37,12 +38,30 @@ void MainWindow::changeMemoryUsage() {
     }
 }
 
+void MainWindow::inMemoryCardsInfo() {
+    while (1) {
+        QTableWidgetItem *item = new QTableWidgetItem(memoryManager.getInMemoryCardsInfo());
+        QTableWidgetItem *item1 = new QTableWidgetItem(memoryManager.getInDiscCardsInfo());
+        memoryManager.inMemoryCards.deleteLastData();
+        memoryManager.createInMemoryCardsInfo();
+        memoryManager.createInDiscCardsInfo();
+        ui->tableWidget->setItem(0, 0, item);
+        ui->tableWidget->setItem(0, 1, item1);
+        this->tablei++;
+        sleep_for(std::chrono::milliseconds(1000));
+    }
+}
+
 void MainWindow::on_startServerBtn_clicked()
 {
     ui->startServerBtn->setEnabled(false);
     ui->logText->appendPlainText("Iniciando server");
     server->startServer();
     ui->logText->appendPlainText("Server iniciado");
+
+    // Para tratar la tabla.
+    std::thread tMemory(&MainWindow::inMemoryCardsInfo, this);
+    tMemory.detach();
 }
 
 

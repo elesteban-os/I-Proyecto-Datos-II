@@ -17,8 +17,10 @@ private:
     PROCESS_MEMORY_COUNTERS_EX pmc;
     SIZE_T currentMemoryUsage = pmc.WorkingSetSize;
     int maxMemoryCards = 5;
-    linkedCard inMemoryCards;
+    int inGameCards = 15;
+
     char inMemoryCardsInfo[20];
+    char inDiscCardsInfo[20];
     int pageHit = 0;
     int pageFault = 0;
     const char *adressCards[15] = { "images/0.jpg", "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg",
@@ -27,14 +29,19 @@ private:
     int cardsMatrix[5][6];
     Server *server = new Server();
 public:
+    linkedCard inMemoryCards;
     Memory();
     void memoryUsage();
     int getCurrentMemoryUsage();
+    char* getInMemoryCardsInfo();
+    char* getInDiscCardsInfo();
     void newCard();
     void randomCards();
     void deleteCard();
     void initInMemoryCards();
     void createInMemoryCardsInfo();
+    void createInDiscCardsInfo();
+    void createCardsInfo(char* buffer, int* ids, int size);
     void startGame();
 };
 

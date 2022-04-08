@@ -16,6 +16,7 @@ LIBS += -lpsapi
 
 SOURCES += \
     card.cpp \
+    game.cpp \
     linkedcard.cpp \
     linkedlist.cpp \
     main.cpp \
@@ -25,6 +26,7 @@ SOURCES += \
 
 HEADERS += \
     card.h \
+    game.h \
     linkedcard.h \
     linkedlist.h \
     mainwindow.h \

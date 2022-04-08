@@ -8,6 +8,7 @@ linkedCard::linkedCard()
 void linkedCard::add(char* data, int size, int num) {
     if (head == NULL) {
         head = new card(data, size, num);
+        printf("%s", "if add");
     } else {
         card *tmp = head;
         while (tmp->getNext() != NULL) {
@@ -16,8 +17,9 @@ void linkedCard::add(char* data, int size, int num) {
         tmp->setNext(new card);
         tmp->getNext()->setImage(data, size);
         tmp->getNext()->setID(num);
+        printf("%s", "else add");
     }
-    size++;
+    this->size++;
 }
 
 char* linkedCard::getData(int index) {
@@ -40,13 +42,14 @@ int linkedCard::getID(int index) {
         }
         return tmp->getID();
     } else {
-        return NULL;
+        return -1;
     }
 }
 
 int linkedCard::deleteData(int index) {
     if (size == 1 && index == 0) {
         delete(head);
+        size--;
         return 1;
     } else if (size == 0) {
         return -1;
@@ -64,8 +67,8 @@ int linkedCard::deleteData(int index) {
     return 0;
 }
 
-int linkedCard::deleteLastData() {
-    return deleteData(size - 1);
+void linkedCard::deleteLastData() {
+    deleteData(size - 1);
 }
 
 int linkedCard::getSize() {
