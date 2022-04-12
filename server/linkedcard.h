@@ -17,6 +17,8 @@ public:
     void deleteLastData();
     int getSize();
     int getID(int index);
+    bool searchForID(int ID);
+    char* getDataByID(int id);
 };
 
 #endif // LINKEDCARD_H

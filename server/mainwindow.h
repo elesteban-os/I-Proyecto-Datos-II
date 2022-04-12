@@ -8,6 +8,7 @@
 #include <string>
 #include <stdio.h>
 #include <string.h>
+#include <QDebug>
 
 using std::this_thread::sleep_for;
 
@@ -26,6 +27,9 @@ public:
     void changeMemoryUsage();
     void changeMemoryUsageHelper();
     void inMemoryCardsInfo();
+    void changePointsInfo();
+    void changePagesInfo();
+    void logInfo();
 
 private slots:
     void on_startServerBtn_clicked();

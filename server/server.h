@@ -9,6 +9,7 @@
 #include <thread>
 #include <string.h>
 #include <iostream>
+#include <QDebug>
 
 #define PORT_PORT 1337
 
@@ -20,7 +21,13 @@ private:
     WSADATA WsaData;
     int num, num2, clientLong;
     int bufferLen = 1024;
+    bool readyQuestionImage = false;
     char buffer[1024];
+    char name[1024];
+    bool newName = false;
+    int cardPetition = 0;
+    bool newCardPetition = false;
+    int clientPetition = 0;
     struct sockaddr_in server1;
     struct sockaddr_in client1;
     int serverSocket = 0;
@@ -30,14 +37,17 @@ private:
     std::thread t; 
     std::thread tacpt;
 
+
     void writeLastMessage(char message[], int len);
-    int readClients();
+    int readClient(int i);
     int wsaCreate();
     int createServerSocket();
     int addressCreate();
     int bindServerSocket();
     int listenServerSocket();
     int acceptSocket();
+    void understandMessage(int i);
+
 
 public:
     Server();
@@ -46,7 +56,20 @@ public:
     void sendMessage(const char* message, int client);
     void sendMessage(char *message, int client);
     void sendMessage(char *message, int client, int size);
-    void setZeroesLastMessage();    
+    void setZeroesLastMessage();
+    bool getReadyQuestionImage();
+
+    bool getNewNameBool();
+    void setNewNameBool(bool name);
+
+    char* getName();
+    void clearName();
+
+    int getCardPetition();
+    bool getNewCardPetition();
+    void setNewCardPetition(bool value);
+    int getClientPetition();
+
 
 };
 

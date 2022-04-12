@@ -12,24 +12,80 @@ void Server::writeLastMessage (char message[], int len) {
     }
 }
 
-int Server::readClients() {
-    int i = 0;
+bool Server::getNewNameBool() {
+    return this->newName;
+}
+
+void Server::setNewNameBool(bool name) {
+    this->newName = name;
+}
+
+char* Server::getName() {
+    return name;
+}
+
+void Server::clearName() {
+    memset(name, 0, 1024);
+}
+
+void Server::understandMessage(int i) {
+    const char *message1 = "name";
+    const char *message2 = "card";
+    memset(buffer, 0, sizeof(buffer));
+    //char* token = strtok(lastMessage, " ");
+    qDebug() << "LM: \"" << lastMessage << "\"" << "\n";
+
+    if (strcmp(lastMessage, message1) == 0) {
+        //token = strtok(NULL, "-");
+        
+        num2 = recv(clients[i], buffer, sizeof(buffer), 0);
+        memset(name, 0, sizeof(name));
+        memcpy(name, buffer, num2);
+        qDebug() << "Nombre:" << name << "\n";
+        newName = true;
+        //num2 = recv(clients[i], buffer, sizeof(buffer), 0); 
+    }
+    if (strcmp(lastMessage, message2) == 0) {
+        num2 = recv(clients[i], buffer, sizeof(buffer), 0);
+        if (num2 == 100) {
+            cardPetition = 0;
+        } else {
+            cardPetition = num2;
+        }
+        qDebug() << "CardPetition" << cardPetition << "\n";
+        newCardPetition = true;
+        clientPetition = i;
+    }
+}
+
+int Server::readClient(int i) {
     char buffer[1024];
     int bufferLen = 1024;
     int num2;
     while(1) {
-        for (i; i < 2; i++) {
-            num2 = recv(clients[i], buffer, sizeof(buffer), 0);
-            if (num2 != -1) {
-                printf("Mensajes: %s\n", buffer);
-                writeLastMessage(buffer, num2);
-                memset(buffer, 0, sizeof(buffer));
-            } 
-            num2 = send(clients[i], "recibido", 8, 0);
-        }
-        i = 0;
-        sleep_for(std::chrono::milliseconds(1));
-    }                         
+        num2 = recv(clients[i], buffer, sizeof(buffer), 0);
+        if (num2 != -1) {
+            qDebug() << "Mensaje:" << "\"" << buffer << "\"" << "\n";
+            memset(lastMessage, 0, 1024);
+            memcpy(lastMessage, buffer, num2);
+            understandMessage(i);
+            memset(buffer, 0, sizeof(buffer));
+        } 
+
+        //num2 = send(clients[i], "recibido\0", 10, 0);
+        sleep_for(std::chrono::milliseconds(10));
+    }
+}                         
+
+int Server::acceptSocket() {
+    socklen_t clilen = sizeof(client1);
+    for (int i = 0; i < 2; i++) {
+        clients[i] = accept(serverSocket, (struct sockaddr *)&client1, &clilen);
+        std::thread tRead(&Server::readClient, this, i);
+        tRead.detach();
+    }
+    readyQuestionImage = true;
+    return 0;
 }
 
 int Server::wsaCreate() {
@@ -79,15 +135,7 @@ int Server::listenServerSocket() {
     return num;
 }
 
-int Server::acceptSocket() {
-    socklen_t clilen = sizeof(client1);
-    for (int i = 0; i < 1; i++) {
-        clients[i] = accept(serverSocket, (struct sockaddr *)&client1, &clilen); 
-    
-    }
-    readClients();
-    return 0;
-}
+
 
 char* Server::getLastMessage() {
     return lastMessage;
@@ -122,4 +170,24 @@ void Server::sendMessage(char *message, int client, int size) {
 
 void Server::setZeroesLastMessage() {
     memset(&lastMessage, 0, sizeof(lastMessage));
+}
+
+bool Server::getReadyQuestionImage() {
+    return readyQuestionImage;
+}
+
+int Server::getCardPetition() {
+    return cardPetition;
+}
+
+bool Server::getNewCardPetition() {
+    return newCardPetition;
+}
+
+void Server::setNewCardPetition(bool value) {
+    this->newCardPetition = value;
+}
+
+int Server::getClientPetition() {
+    return clientPetition;
 }

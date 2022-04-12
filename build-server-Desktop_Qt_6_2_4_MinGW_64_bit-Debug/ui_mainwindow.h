@@ -38,7 +38,12 @@ public:
     QLabel *staticPageHit;
     QLabel *staticPageFault;
     QLabel *pageHit;
-    QLabel *pageHit_2;
+    QLabel *pageFault;
+    QLabel *staticPoints;
+    QLabel *staticName1;
+    QLabel *staticName2;
+    QLabel *points1;
+    QLabel *points2;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -60,7 +65,7 @@ public:
         sendImgBtn->setGeometry(QRect(360, 180, 91, 24));
         label1 = new QLabel(centralwidget);
         label1->setObjectName(QString::fromUtf8("label1"));
-        label1->setGeometry(QRect(290, 440, 161, 171));
+        label1->setGeometry(QRect(-10, 560, 161, 171));
         staticMemoryUsage = new QLabel(centralwidget);
         staticMemoryUsage->setObjectName(QString::fromUtf8("staticMemoryUsage"));
         staticMemoryUsage->setGeometry(QRect(180, 210, 131, 31));
@@ -114,11 +119,36 @@ public:
         font1.setBold(false);
         pageHit->setFont(font1);
         pageHit->setAlignment(Qt::AlignCenter);
-        pageHit_2 = new QLabel(centralwidget);
-        pageHit_2->setObjectName(QString::fromUtf8("pageHit_2"));
-        pageHit_2->setGeometry(QRect(280, 390, 91, 31));
-        pageHit_2->setFont(font1);
-        pageHit_2->setAlignment(Qt::AlignCenter);
+        pageFault = new QLabel(centralwidget);
+        pageFault->setObjectName(QString::fromUtf8("pageFault"));
+        pageFault->setGeometry(QRect(280, 390, 91, 31));
+        pageFault->setFont(font1);
+        pageFault->setAlignment(Qt::AlignCenter);
+        staticPoints = new QLabel(centralwidget);
+        staticPoints->setObjectName(QString::fromUtf8("staticPoints"));
+        staticPoints->setGeometry(QRect(200, 430, 91, 31));
+        staticPoints->setFont(font);
+        staticPoints->setAlignment(Qt::AlignCenter);
+        staticName1 = new QLabel(centralwidget);
+        staticName1->setObjectName(QString::fromUtf8("staticName1"));
+        staticName1->setGeometry(QRect(130, 460, 91, 31));
+        staticName1->setFont(font);
+        staticName1->setAlignment(Qt::AlignCenter);
+        staticName2 = new QLabel(centralwidget);
+        staticName2->setObjectName(QString::fromUtf8("staticName2"));
+        staticName2->setGeometry(QRect(280, 460, 91, 31));
+        staticName2->setFont(font);
+        staticName2->setAlignment(Qt::AlignCenter);
+        points1 = new QLabel(centralwidget);
+        points1->setObjectName(QString::fromUtf8("points1"));
+        points1->setGeometry(QRect(130, 480, 91, 31));
+        points1->setFont(font1);
+        points1->setAlignment(Qt::AlignCenter);
+        points2 = new QLabel(centralwidget);
+        points2->setObjectName(QString::fromUtf8("points2"));
+        points2->setGeometry(QRect(280, 480, 91, 31));
+        points2->setFont(font1);
+        points2->setAlignment(Qt::AlignCenter);
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -156,7 +186,12 @@ public:
         staticPageHit->setText(QCoreApplication::translate("MainWindow", "Page Hit", nullptr));
         staticPageFault->setText(QCoreApplication::translate("MainWindow", "Page Fault", nullptr));
         pageHit->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
-        pageHit_2->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
+        pageFault->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
+        staticPoints->setText(QCoreApplication::translate("MainWindow", "Puntajes", nullptr));
+        staticName1->setText(QCoreApplication::translate("MainWindow", "Nombre", nullptr));
+        staticName2->setText(QCoreApplication::translate("MainWindow", "Nombre", nullptr));
+        points1->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
+        points2->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
     } // retranslateUi
 
 };

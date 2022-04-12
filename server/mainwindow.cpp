@@ -26,6 +26,16 @@ void MainWindow::changeMemoryUsageHelper() {
     tMemory.detach();
 }
 
+void MainWindow::logInfo() {
+    char* logMessage;
+    //QTextStream out(stdout);
+    while (1) {
+        logMessage = memoryManager.getServer()->getLastMessage();
+        qDebug() << logMessage;
+        sleep_for(std::chrono::milliseconds(2000));
+    }
+}
+
 void MainWindow::changeMemoryUsage() {
     int num;
     QString numS;
@@ -38,30 +48,61 @@ void MainWindow::changeMemoryUsage() {
     }
 }
 
+void MainWindow::changePagesInfo() {
+    while (1) {
+        ui->pageHit->setText(QString::number(memoryManager.getPageHit()));
+        ui->pageFault->setText(QString::number(memoryManager.getPageFault()));
+        sleep_for(std::chrono::milliseconds(1000));
+    }
+
+}
+
 void MainWindow::inMemoryCardsInfo() {
     while (1) {
-        QTableWidgetItem *item = new QTableWidgetItem(memoryManager.getInMemoryCardsInfo());
-        QTableWidgetItem *item1 = new QTableWidgetItem(memoryManager.getInDiscCardsInfo());
-        memoryManager.inMemoryCards.deleteLastData();
         memoryManager.createInMemoryCardsInfo();
         memoryManager.createInDiscCardsInfo();
+        QTableWidgetItem *item = new QTableWidgetItem(memoryManager.getInMemoryCardsInfo());
+        QTableWidgetItem *item1 = new QTableWidgetItem(memoryManager.getInDiscCardsInfo());
         ui->tableWidget->setItem(0, 0, item);
         ui->tableWidget->setItem(0, 1, item1);
-        this->tablei++;
         sleep_for(std::chrono::milliseconds(1000));
     }
 }
 
+void MainWindow::changePointsInfo() {
+    int points[2];
+    while (1) {
+        points[0] = memoryManager.getGame()->getScore(0);
+        points[1] = memoryManager.getGame()->getScore(1);
+        ui->points1->setText(QString::number(points[0]));
+        ui->points2->setText(QString::number(points[1]));
+        sleep_for(std::chrono::milliseconds(1000));
+    }
+}
+
+
+
+
+// Al iniciar el servidor debe iniciar todos los threads de la funciones que deben escuchar y generar las clases puntero de MainWindow.
 void MainWindow::on_startServerBtn_clicked()
 {
     ui->startServerBtn->setEnabled(false);
     ui->logText->appendPlainText("Iniciando server");
-    server->startServer();
+    memoryManager.startGame();
     ui->logText->appendPlainText("Server iniciado");
 
     // Para tratar la tabla.
     std::thread tMemory(&MainWindow::inMemoryCardsInfo, this);
     tMemory.detach();
+
+    std::thread tPoints(&MainWindow::changePointsInfo, this);
+    tPoints.detach();
+
+    std::thread tPages(&MainWindow::changePagesInfo, this);
+    tPages.detach();
+
+    //std::thread tLogInfo(&MainWindow::logInfo, this);
+    //tLogInfo.detach();
 }
 
 
