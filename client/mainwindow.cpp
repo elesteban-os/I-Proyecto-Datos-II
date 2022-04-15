@@ -17,6 +17,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::timeHelper() {
+    std::thread tTime(&MainWindow::time, this);
+    tTime.detach();
+}
+
 void MainWindow::time() {
     while(1) {
         sleep_for(std::chrono::milliseconds(1000));
@@ -44,12 +49,6 @@ void MainWindow::threadData() {
     }
 }
 
-void MainWindow::on_connectBtn_clicked()
-{
-    client = new clientSock;
-    client->startClient();
-    //std::thread();
-}
 
 void MainWindow::changeImageButton(char *image, QPushButton* button) {
     QImage imgdata((uchar*)image, 100, 100, QImage::Format_ARGB32);
@@ -80,20 +79,7 @@ void MainWindow::changeAllImageButton(char *image) {
     }
 }
 
-void MainWindow::on_seeImageBtn_clicked()
-{
-    char *data = client->getData();
-    printf("%s", data);
-    QImage imgdata((uchar*)data, 100, 100, QImage::Format_ARGB32);
-    QPixmap p(QPixmap::fromImage(imgdata));
-    //ui->label->setPixmap(p);
-    ui->pushButton->setIcon(p);
-    ui->pushButton->setIconSize(QSize(100, 100));
 
-
-
-
-}
 
 void MainWindow::isPlayable() {
     while (!client->getPlayable()) {
@@ -152,6 +138,12 @@ void MainWindow::on_actionUnirse_triggered()
     ui->infoGameLabel->setText("Esperando jugador...");
     std::thread tEnemyName(&MainWindow::waitEnemyName, this);
     tEnemyName.detach();
+
+    std::thread tWaitCard(&MainWindow::waitCard, this);
+    tWaitCard.detach();
+
+    std::thread tEnemyWaitCard(&MainWindow::waitEnemyCardSelected, this);
+    tEnemyWaitCard.detach();
 }
 
 void MainWindow::gameTurn() {   
@@ -183,6 +175,7 @@ void MainWindow::waitIndicatorCards() {
     char* imageQuestion = client->getImgInd();
     changeAllImageButton(imageQuestion);
     //ui->infoGameLabel->setText(" ");
+    client->setImgIndBool(false);
     gameStarted();
 }
 
@@ -199,37 +192,301 @@ void MainWindow::waitEnemyName() {
 }
 
 
-
-void MainWindow::on_pushButton_2_clicked()
-{
-    std::thread time(&MainWindow::time, this);
-    time.detach();
-}
-
-
-
-void MainWindow::waitCard() {
-    QPushButton *buttons[30] = {ui->card00, ui->card01, ui->card02, ui->card03, ui->card04, ui->card05,
-                                ui->card10, ui->card11, ui->card12, ui->card13, ui->card14, ui->card15,
-                                ui->card20, ui->card21, ui->card22, ui->card23, ui->card24, ui->card25,
-                                ui->card30, ui->card31, ui->card32, ui->card33, ui->card34, ui->card35,
-                                ui->card40, ui->card41, ui->card42, ui->card43, ui->card44, ui->card45};
-    while (!client->getNewData()) {
+void MainWindow::getNewCardIndicator() {
+    QPushButton *buttons[5][6] = {{ui->card00, ui->card01, ui->card02, ui->card03, ui->card04, ui->card05},
+                                  {ui->card10, ui->card11, ui->card12, ui->card13, ui->card14, ui->card15},
+                                  {ui->card20, ui->card21, ui->card22, ui->card23, ui->card24, ui->card25},
+                                  {ui->card30, ui->card31, ui->card32, ui->card33, ui->card34, ui->card35},
+                                  {ui->card40, ui->card41, ui->card42, ui->card43, ui->card44, ui->card45}};
+    while (!client->getImgIndBool()) {
         sleep_for(std::chrono::milliseconds(100));
     }
-    changeImageButton(client->getData(), buttons[this->lastCardSelected]);
-    client->clearData();
-    client->setNewData(false);
+    char* imageResult = client->getImgInd();
+    changeImageButton(imageResult, buttons[lastCardSelected[0]][lastCardSelected[1]]);
+    //sleep_for(std::chrono::milliseconds(10));
+    changeImageButton(imageResult, buttons[lastCardSelected2[0]][lastCardSelected2[1]]);
+    client->setImgIndBool(false);
 }
 
+void MainWindow::analizeResults(bool result) {
+
+    if (result) {
+        // Obtener indicador y puntaje, hacer inactivas algunas cartas.
+        getNewCardIndicator();
+        enabledButtons[lastCardSelected[0]][lastCardSelected[1]] = 0;
+        enabledButtons[lastCardSelected2[0]][lastCardSelected2[1]] = 0;
+    } else {
+        getNewCardIndicator();
+    }
+    lastCardSelected[0] = -1;
+    lastCardSelected2[0] = -1;
+    client->setTurn(false);
+    changeEnabledButton(false);
+    gameTurn();
+}
+
+void MainWindow::verifyPair() {
+    if (cardsSelected == 2) {
+        while (client->getCorrect() == -1) {
+            sleep_for(std::chrono::milliseconds(100));
+        }
+        if (client->getCorrect() == 1) {
+            qDebug() << "par encontrado";
+            analizeResults(true);
+
+        } else {
+            qDebug() << "par no encontrado";
+            analizeResults(false);
+        }
+        client->setCorrect(-1);
+        cardsSelected = 0;
+    }
+}
+
+void MainWindow::waitEnemyCardSelected() {
+    QPushButton *buttons[5][6] = {{ui->card00, ui->card01, ui->card02, ui->card03, ui->card04, ui->card05},
+                                  {ui->card10, ui->card11, ui->card12, ui->card13, ui->card14, ui->card15},
+                                  {ui->card20, ui->card21, ui->card22, ui->card23, ui->card24, ui->card25},
+                                  {ui->card30, ui->card31, ui->card32, ui->card33, ui->card34, ui->card35},
+                                  {ui->card40, ui->card41, ui->card42, ui->card43, ui->card44, ui->card45}};
+    int x;
+    int y;
+    while (1) {
+        while (!client->getEnemyDataReceived()) {
+            sleep_for(std::chrono::milliseconds(100));
+        }
+        x = client->getEnemyCardLocation() / 10;
+        y = client->getEnemyCardLocation() % 10;
+        bool cardFound = client->getCorrectEnemyCardSelected();
+        changeImageButton(client->getData(), buttons[x][y]);
+        if (cardFound) {
+            enabledButtons[x][y] = 0;
+        }
+
+        client->clearData();
+        client->setEnemyDataReceived(false);
+    }
+
+}
+
+void MainWindow::waitCard() {
+    QPushButton *buttons[5][6] = {{ui->card00, ui->card01, ui->card02, ui->card03, ui->card04, ui->card05},
+                                  {ui->card10, ui->card11, ui->card12, ui->card13, ui->card14, ui->card15},
+                                  {ui->card20, ui->card21, ui->card22, ui->card23, ui->card24, ui->card25},
+                                  {ui->card30, ui->card31, ui->card32, ui->card33, ui->card34, ui->card35},
+                                  {ui->card40, ui->card41, ui->card42, ui->card43, ui->card44, ui->card45}};
+    while (1) {
+        while (!client->getNewData()) {
+            sleep_for(std::chrono::milliseconds(100));
+        }
+        if (lastCardSelected2[0] != -1) {
+            changeImageButton(client->getData(), buttons[lastCardSelected2[0]][lastCardSelected2[1]]);
+        } else {
+            changeImageButton(client->getData(), buttons[lastCardSelected[0]][lastCardSelected[1]]);
+        }
+
+        client->clearData();
+        client->setNewData(false);
+    }
+
+}
+
+void MainWindow::cardSelectedSystem(int card) {
+    int x = card / 10;
+    int y = card % 10;
+    if (enabledButtons[x][y]) {
+        if (cardsSelected < 2) {
+            if (cardsSelected == 0) {
+                lastCardSelected[0] = x;
+                lastCardSelected[1] = y;
+            } else {
+                lastCardSelected2[0] = x;
+                lastCardSelected2[1] = y;
+            }
+            cardsSelected++;
+            std::thread tVerify(&MainWindow::verifyPair, this);
+            tVerify.detach();
+            client->sendMessage("card", 4);
+            if (card == 0) {
+                client->sendMessage(" ", 100);
+            } else {
+                client->sendMessage(" ", card);
+            }
+        }
+    }
+}
 
 void MainWindow::on_card00_clicked()
 {
-    this->lastCardSelected = 0;
-    client->sendMessage("card", 4);
-    client->sendMessage(" ", 100);
+    cardSelectedSystem(0);
+}
 
-    std::thread tWaitCard(&MainWindow::waitCard, this);
-    tWaitCard.detach();
+void MainWindow::on_card01_clicked()
+{
+    cardSelectedSystem(1);
+}
+
+void MainWindow::on_card02_clicked()
+{
+    cardSelectedSystem(2);
+}
+
+void MainWindow::on_card03_clicked()
+{
+    cardSelectedSystem(3);
+}
+
+void MainWindow::on_card04_clicked()
+{
+    cardSelectedSystem(4);
+}
+
+void MainWindow::on_card05_clicked()
+{
+    cardSelectedSystem(5);
+}
+
+void MainWindow::on_card10_clicked()
+{
+    cardSelectedSystem(10);
+}
+
+
+void MainWindow::on_card11_clicked()
+{
+    cardSelectedSystem(11);
+}
+
+
+void MainWindow::on_card12_clicked()
+{
+    cardSelectedSystem(12);
+}
+
+
+void MainWindow::on_card13_clicked()
+{
+    cardSelectedSystem(13);
+}
+
+
+void MainWindow::on_card14_clicked()
+{
+    cardSelectedSystem(14);
+}
+
+
+void MainWindow::on_card15_clicked()
+{
+    cardSelectedSystem(15);
+}
+
+
+void MainWindow::on_card20_clicked()
+{
+    cardSelectedSystem(20);
+}
+
+
+void MainWindow::on_card21_clicked()
+{
+    cardSelectedSystem(21);
+}
+
+
+void MainWindow::on_card22_clicked()
+{
+    cardSelectedSystem(22);
+}
+
+
+void MainWindow::on_card23_clicked()
+{
+    cardSelectedSystem(23);
+}
+
+
+void MainWindow::on_card24_clicked()
+{
+    cardSelectedSystem(24);
+}
+
+
+void MainWindow::on_card25_clicked()
+{
+    cardSelectedSystem(25);
+}
+
+
+void MainWindow::on_card30_clicked()
+{
+    cardSelectedSystem(30);
+}
+
+
+void MainWindow::on_card31_clicked()
+{
+    cardSelectedSystem(31);
+}
+
+
+void MainWindow::on_card32_clicked()
+{
+    cardSelectedSystem(32);
+}
+
+
+void MainWindow::on_card33_clicked()
+{
+    cardSelectedSystem(33);
+}
+
+
+void MainWindow::on_card34_clicked()
+{
+    cardSelectedSystem(34);
+}
+
+
+
+void MainWindow::on_card35_clicked()
+{
+    cardSelectedSystem(35);
+}
+
+
+void MainWindow::on_card40_clicked()
+{
+    cardSelectedSystem(40);
+}
+
+
+void MainWindow::on_card41_clicked()
+{
+    cardSelectedSystem(41);
+}
+
+
+void MainWindow::on_card42_clicked()
+{
+    cardSelectedSystem(42);
+}
+
+
+void MainWindow::on_card43_clicked()
+{
+    cardSelectedSystem(43);
+}
+
+
+void MainWindow::on_card44_clicked()
+{
+    cardSelectedSystem(44);
+}
+
+
+void MainWindow::on_card45_clicked()
+{
+    cardSelectedSystem(45);
 }
 

@@ -31,12 +31,19 @@ void clientSock::writeLastMessage(int len) {
     memcpy(lastMessage, recBuffer, len);
 }
 
+void clientSock::setImgIndBool(bool value) {
+    imgIndBool = value;
+}
+
 void clientSock::understandMessage() {
     const char* message1 = "card";
     const char* message2 = "imgq";
     const char* message3 = "enemyName";
     const char* message4 = "turn";
     const char* message5 = "started";
+    const char* message6 = "correct";
+    const char* message7 = "incorrect";
+    const char* message8 = "enemyCard";
     memset(&recBuffer, 0, recBufferLen);
     if (strcmp(lastMessage, message1) == 0) {
         qDebug() << "card";
@@ -71,6 +78,71 @@ void clientSock::understandMessage() {
         playable = true;   
         qDebug() << "Playable";     
     }
+    if (strcmp(lastMessage, message6) == 0) {
+        correct = 1;   
+        qDebug() << "Correct";     
+    }
+    if (strcmp(lastMessage, message7) == 0) {
+        correct = 0;   
+        qDebug() << "Inorrect";     
+    }
+    if (strcmp(lastMessage, message8) == 0) {
+        qDebug() << "enemyCard";
+        memset(&data, 0, 50000);
+        //sleep_for(std::chrono::milliseconds(10));
+        num2 = recv(clientSocket, recBuffer, recBufferLen, 0);
+        qDebug() << num2;
+        memcpy(data, recBuffer, num2);
+        memset(&recBuffer, 0, recBufferLen);
+        sleep_for(std::chrono::milliseconds(10));
+        num2 = recv(clientSocket, recBuffer, recBufferLen, 0);
+        if (num2 == 100) {
+            enemyCardLocation = 0;
+        } else {
+            enemyCardLocation = num2;
+        }
+        sleep_for(std::chrono::milliseconds(10));
+        num2 = recv(clientSocket, recBuffer, recBufferLen, 0);
+        if (num2 == 1) {
+            correctEnemyCardSelected = true;
+        } else {
+            correctEnemyCardSelected = false;
+        }
+
+        qDebug() << enemyCardLocation;
+        enemyDataReceived = true;
+        memset(&recBuffer, 0, recBufferLen);   
+        qDebug() << "enemyCardReady";
+    } 
+}
+
+bool clientSock::getCorrectEnemyCardSelected() {
+    return correctEnemyCardSelected;
+}
+
+
+void clientSock::setCorrectEnemyCardSelected(bool value) {
+    correctEnemyCardSelected = value;
+}
+
+bool clientSock::getEnemyDataReceived() {
+    return enemyDataReceived;
+}
+
+void clientSock::setEnemyDataReceived(bool value) {
+    enemyDataReceived = value;
+}
+
+int clientSock::getEnemyCardLocation() {
+    return enemyCardLocation;
+}
+
+int clientSock::getCorrect() {
+    return correct;
+}
+
+void clientSock::setCorrect(int value) {
+    correct = value;
 }
 
 bool clientSock::getNewData() {

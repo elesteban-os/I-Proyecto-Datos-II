@@ -28,6 +28,7 @@ public:
     void sendMessage(char* message);
     void sendMessage(char* message, int size);
     bool getImgIndBool();
+    void setImgIndBool(bool value);
     char* getImgInd();
     char* getEnemyName();
     bool getEnemyNameReceived();
@@ -36,6 +37,16 @@ public:
     bool getNewData();
     void setNewData(bool value);
     void clearData();
+    int getCorrect();
+    void setCorrect(int value);
+
+    bool getEnemyDataReceived();
+    void setEnemyDataReceived(bool value);
+
+    int getEnemyCardLocation();
+
+    bool getCorrectEnemyCardSelected();
+    void setCorrectEnemyCardSelected(bool value);
 
 private:
     WSADATA wsaData;
@@ -54,9 +65,13 @@ private:
     bool imgIndBool = false;
     bool playable = false;
     bool dataReceived = false;
+    bool enemyDataReceived = false;
+    int enemyCardLocation = 0;
+    bool correctEnemyCardSelected = false;
     bool viewedDataReceived = true;
     bool running = true;
     bool turn = false;
+    int correct = -1;
     void wsaCreate();
     void createSocket();
     void connectSocket();

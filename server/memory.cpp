@@ -25,7 +25,13 @@ void Memory::randomCards() {
     int randomNum = 0;
     int readyNums[15];
     for (int i = 0; i < 15; i++) {
-        readyNums[i] = 0;
+        if (availableCards[i]) {
+            readyNums[i] = 0;
+        } else {
+            completeIndex++;
+            readyNums[i] = 2;
+        }
+        
     }
     while (completeIndex != 15) {
         randomNum = rand() % 15;
@@ -39,13 +45,37 @@ void Memory::randomCards() {
         if (readyNums[randomNum] == 2) {
             completeIndex++;
         }
-        if (j == 6) {
-            i++;
-            j = 0;
+        bool ready = false;
+        while (!ready) {
+            if (j == 6) {
+                i++;
+                j = 0;
+            }
+            if (availableButtons[i][j]) {
+                cardsMatrix[i][j] = randomNum;
+                j++; 
+                ready = true;
+            } else {
+                cardsMatrix[i][j] = -1;
+                j++;
+            }
+            
         }
-        cardsMatrix[i][j] = randomNum;
-        j++;  
+         
     }
+
+    QString text;
+    for (int i = 0; i < 5; i++) {
+        text.append("[");
+        for (int j = 0; j < 6; j++) {
+            text.append(QString::number(cardsMatrix[i][j]));
+            text.append(", ");
+        }
+        text.append("]");
+        qDebug() << text;
+        text = "";
+    }
+
 }
 
 void Memory::startGame() {
@@ -54,6 +84,18 @@ void Memory::startGame() {
     server->startServer();
     std::thread tNames(&Memory::getNames, this);
     tNames.detach();
+}
+
+void Memory::changeTurn() {
+    if (game->getTurn() == 0) {
+        game->setTurn(1);
+    } else {
+        game->setTurn(0);
+    }
+    if (game->getPlaying()) {
+        server->sendMessage("turn", game->getTurn(), 4);
+    }
+
 }
 
 void Memory::newCard(int id) {
@@ -81,7 +123,14 @@ void Memory::newCard(int id) {
 
 char* Memory::getAnyCard(int x, int y) {
     int searchID = cardsMatrix[x][y];
-
+    cardsSelected++;
+    if (cardsSelected == 1) {
+        cardSelected1 = searchID;
+        firstButtonsSelected[0] = x;
+        firstButtonsSelected[1] = y;
+    } else {
+        cardSelected2 = searchID;
+    }
     qDebug() << "searchid" << searchID;
 
     char* data = inMemoryCards.getDataByID(searchID);
@@ -96,6 +145,126 @@ char* Memory::getAnyCard(int x, int y) {
     }
 }
 
+void Memory::sendEnemyOneIndicator(int player, int indicator, int button) {
+    QImage image(adressIndicator[indicator]);
+    int size = image.sizeInBytes();
+    char data[size];
+    memcpy(data, image.bits(), size);
+
+    sleep_for(std::chrono::milliseconds(50));
+    server->sendMessage("enemyCard", player, 9);
+    sleep_for(std::chrono::milliseconds(50));
+    server->sendMessage(data, player, size);
+    sleep_for(std::chrono::milliseconds(50));
+    server->sendMessage(" ", player, button);
+    sleep_for(std::chrono::milliseconds(50));
+
+    if (indicator == 1) {
+        server->sendMessage(" ", player, 1);
+        sleep_for(std::chrono::milliseconds(50));
+    } else {
+        server->sendMessage(" ", player, 2);
+        sleep_for(std::chrono::milliseconds(50));
+    }
+}
+
+void Memory::sendPlayerOneIndicator(int player, int indicator) {
+    QImage image(adressIndicator[indicator]);
+    int size = image.sizeInBytes();
+    char data[size];
+    memcpy(data, image.bits(), size);
+
+    sleep_for(std::chrono::milliseconds(50));
+    server->sendMessage("imgq", player, 9);
+    sleep_for(std::chrono::milliseconds(50));
+    server->sendMessage(data, player, size);
+    sleep_for(std::chrono::milliseconds(50));
+}
+
+void Memory::sendResult(bool result, int player) {
+    if (result) {
+        sendPlayerOneIndicator(player, 1);
+        if (player == 0) {
+            sendEnemyOneIndicator(1, 1, buttonsSelected[0]);
+            sendEnemyOneIndicator(1, 1, buttonsSelected[1]);
+        } else {
+            sendEnemyOneIndicator(0, 1, buttonsSelected[0]);
+            sendEnemyOneIndicator(0, 1, buttonsSelected[1]);
+        }
+    } else {
+        // Enviar resultado de fallar al jugador.
+        sendPlayerOneIndicator(player, 0);
+        if (player == 0) {
+            sendEnemyOneIndicator(1, 0, buttonsSelected[0]);
+            sendEnemyOneIndicator(1, 0, buttonsSelected[1]);
+        } else {
+            sendEnemyOneIndicator(0, 0, buttonsSelected[0]);
+            sendEnemyOneIndicator(0, 0, buttonsSelected[1]);
+        }
+    }
+    buttonsSelected[0] = -1;
+    buttonsSelected[1] = -1;
+    changeTurn();
+}
+
+void Memory::verifyPair(int x, int y) {
+    sleep_for(std::chrono::milliseconds(1000));
+    if (cardSelected1 == cardSelected2) {
+        server->sendMessage("correct", server->getClientPetition(), 7);
+        sendResult(true, server->getClientPetition());
+        availableButtons[x][y] = 0;
+        availableButtons[firstButtonsSelected[0]][firstButtonsSelected[1]] = 0;
+        availableCards[cardSelected1] = 0;
+    } else {
+        server->sendMessage("incorrect", server->getClientPetition(), 9);
+        sendResult(false, server->getClientPetition());
+    }
+}
+
+void Memory::lastClientsButtons(int button) {
+    if (buttonsSelected[0] == -1) {
+        buttonsSelected[0] = button;
+    } else {
+        buttonsSelected[1] = button;
+    }
+
+}
+
+void Memory::sendPlayersCard(char* image, int clientPetition) {
+    server->sendMessage("card", clientPetition, 4);
+    sleep_for(std::chrono::milliseconds(10));
+    server->sendMessage(image, clientPetition, 47000);
+    sleep_for(std::chrono::milliseconds(30));
+
+    int cardPetition = 0;
+    if (server->getCardPetition() == 0) {
+        cardPetition = 100;
+    } else {
+        cardPetition = server->getCardPetition();
+    }
+    lastClientsButtons(cardPetition);
+
+    if (clientPetition == 0) {
+        server->sendMessage("enemyCard", 1, 9);
+        sleep_for(std::chrono::milliseconds(30));
+        server->sendMessage(image, 1, 47000);
+        sleep_for(std::chrono::milliseconds(30));
+        server->sendMessage(" ", 1, cardPetition);
+        sleep_for(std::chrono::milliseconds(30));
+        server->sendMessage(" ", 1, 2);
+        sleep_for(std::chrono::milliseconds(50));
+    } else {
+        server->sendMessage("enemyCard", 0, 9);
+        sleep_for(std::chrono::milliseconds(30));
+        server->sendMessage(image, 0, 47000);
+        sleep_for(std::chrono::milliseconds(30));
+        server->sendMessage(" ", 0, cardPetition);
+        sleep_for(std::chrono::milliseconds(30));
+        server->sendMessage(" ", 0, 2);
+        sleep_for(std::chrono::milliseconds(50));
+    }
+}
+
 void Memory::getCardsPetition() {
     int x = 0;
     int y = 0;
@@ -103,16 +272,23 @@ void Memory::getCardsPetition() {
         while (!server->getNewCardPetition()) {
             sleep_for(std::chrono::milliseconds(100));
         }
-        x = server->getCardPetition() % 10;
-        y = server->getCardPetition() / 10;
-        qDebug() << "Matriz00" << cardsMatrix[0][0];
+        qDebug() << "getCardsPetition" << server->getCardPetition();
+        x = server->getCardPetition() / 10;
+        y = server->getCardPetition() % 10;
+
         char* image = getAnyCard(x, y);
 
-        server->sendMessage("card", server->getClientPetition(), 4);
-        sleep_for(std::chrono::milliseconds(10));
-        server->sendMessage(image, server->getClientPetition(), 47000);
+        int clientPetition = server->getClientPetition();
+        sendPlayersCard(image, clientPetition);
+
         server->setNewCardPetition(false);
-        randomCards();
+
+        if (cardsSelected == 2) {
+            verifyPair(x, y);
+            randomCards();
+            cardsSelected = 0;
+        }
+
 
     }
 }
@@ -139,6 +315,8 @@ void Memory::sendQuestionImages() {
     int size = image.sizeInBytes();
     char data[size];
     memcpy(data, image.bits(), size);
+
+    qDebug() << "imgqSize" << size;
 
     for (int i = 0; i < 2; i++) {
         server->sendMessage("imgq", i, 4);

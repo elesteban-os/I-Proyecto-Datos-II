@@ -29,14 +29,11 @@ public:
     QAction *actionUnirse;
     QAction *actionCrear;
     QWidget *centralwidget;
-    QPushButton *connectBtn;
-    QPushButton *seeImageBtn;
     QPushButton *card00;
     QPushButton *card01;
     QPushButton *card02;
     QPushButton *card03;
     QPushButton *card04;
-    QPushButton *pushButton;
     QPushButton *card10;
     QPushButton *card11;
     QPushButton *card12;
@@ -68,10 +65,10 @@ public:
     QLCDNumber *timeMin01;
     QLCDNumber *timeMin10;
     QLabel *label;
-    QPushButton *pushButton_2;
     QLabel *playerNameLabel;
     QLabel *enemyNameLabel;
     QLabel *infoGameLabel;
+    QLCDNumber *enemyPoints;
     QMenuBar *menubar;
     QMenu *menuJuego;
     QStatusBar *statusbar;
@@ -80,19 +77,13 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(631, 737);
+        MainWindow->resize(631, 678);
         actionUnirse = new QAction(MainWindow);
         actionUnirse->setObjectName(QString::fromUtf8("actionUnirse"));
         actionCrear = new QAction(MainWindow);
         actionCrear->setObjectName(QString::fromUtf8("actionCrear"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        connectBtn = new QPushButton(centralwidget);
-        connectBtn->setObjectName(QString::fromUtf8("connectBtn"));
-        connectBtn->setGeometry(QRect(110, 660, 80, 24));
-        seeImageBtn = new QPushButton(centralwidget);
-        seeImageBtn->setObjectName(QString::fromUtf8("seeImageBtn"));
-        seeImageBtn->setGeometry(QRect(20, 660, 80, 24));
         card00 = new QPushButton(centralwidget);
         card00->setObjectName(QString::fromUtf8("card00"));
         card00->setEnabled(false);
@@ -536,14 +527,6 @@ public:
         card04->setPalette(palette4);
         card04->setCursor(QCursor(Qt::PointingHandCursor));
         card04->setIconSize(QSize(90, 90));
-        pushButton = new QPushButton(centralwidget);
-        pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(520, 580, 91, 91));
-        pushButton->setCursor(QCursor(Qt::PointingHandCursor));
-        pushButton->setIconSize(QSize(90, 90));
-        pushButton->setCheckable(false);
-        pushButton->setAutoDefault(false);
-        pushButton->setFlat(false);
         card10 = new QPushButton(centralwidget);
         card10->setObjectName(QString::fromUtf8("card10"));
         card10->setEnabled(false);
@@ -2627,7 +2610,7 @@ public:
         points->setSegmentStyle(QLCDNumber::Flat);
         timeSec01 = new QLCDNumber(centralwidget);
         timeSec01->setObjectName(QString::fromUtf8("timeSec01"));
-        timeSec01->setGeometry(QRect(100, 580, 31, 41));
+        timeSec01->setGeometry(QRect(335, 540, 31, 41));
         timeSec01->setInputMethodHints(Qt::ImhNone);
         timeSec01->setFrameShape(QFrame::NoFrame);
         timeSec01->setLineWidth(4);
@@ -2637,7 +2620,7 @@ public:
         timeSec01->setProperty("intValue", QVariant(0));
         timeSec10 = new QLCDNumber(centralwidget);
         timeSec10->setObjectName(QString::fromUtf8("timeSec10"));
-        timeSec10->setGeometry(QRect(80, 580, 31, 41));
+        timeSec10->setGeometry(QRect(315, 540, 31, 41));
         timeSec10->setInputMethodHints(Qt::ImhNone);
         timeSec10->setFrameShape(QFrame::NoFrame);
         timeSec10->setLineWidth(4);
@@ -2647,7 +2630,7 @@ public:
         timeSec10->setProperty("intValue", QVariant(0));
         timeMin01 = new QLCDNumber(centralwidget);
         timeMin01->setObjectName(QString::fromUtf8("timeMin01"));
-        timeMin01->setGeometry(QRect(50, 580, 31, 41));
+        timeMin01->setGeometry(QRect(285, 540, 31, 41));
         timeMin01->setInputMethodHints(Qt::ImhNone);
         timeMin01->setFrameShape(QFrame::NoFrame);
         timeMin01->setLineWidth(4);
@@ -2657,7 +2640,7 @@ public:
         timeMin01->setProperty("intValue", QVariant(0));
         timeMin10 = new QLCDNumber(centralwidget);
         timeMin10->setObjectName(QString::fromUtf8("timeMin10"));
-        timeMin10->setGeometry(QRect(30, 580, 31, 41));
+        timeMin10->setGeometry(QRect(265, 540, 31, 41));
         timeMin10->setInputMethodHints(Qt::ImhNone);
         timeMin10->setFrameShape(QFrame::NoFrame);
         timeMin10->setLineWidth(4);
@@ -2667,13 +2650,10 @@ public:
         timeMin10->setProperty("intValue", QVariant(0));
         label = new QLabel(centralwidget);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(80, 580, 20, 31));
+        label->setGeometry(QRect(315, 540, 20, 31));
         QFont font;
         font.setPointSize(24);
         label->setFont(font);
-        pushButton_2 = new QPushButton(centralwidget);
-        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(340, 600, 80, 24));
         playerNameLabel = new QLabel(centralwidget);
         playerNameLabel->setObjectName(QString::fromUtf8("playerNameLabel"));
         playerNameLabel->setGeometry(QRect(0, 520, 151, 21));
@@ -2692,6 +2672,12 @@ public:
         infoGameLabel->setGeometry(QRect(120, 520, 391, 21));
         infoGameLabel->setFont(font1);
         infoGameLabel->setAlignment(Qt::AlignCenter);
+        enemyPoints = new QLCDNumber(centralwidget);
+        enemyPoints->setObjectName(QString::fromUtf8("enemyPoints"));
+        enemyPoints->setGeometry(QRect(510, 540, 101, 41));
+        enemyPoints->setFrameShape(QFrame::NoFrame);
+        enemyPoints->setMode(QLCDNumber::Dec);
+        enemyPoints->setSegmentStyle(QLCDNumber::Flat);
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -2705,12 +2691,8 @@ public:
 
         menubar->addAction(menuJuego->menuAction());
         menuJuego->addAction(actionUnirse);
-        menuJuego->addAction(actionCrear);
 
         retranslateUi(MainWindow);
-
-        pushButton->setDefault(false);
-
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -2720,14 +2702,11 @@ public:
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         actionUnirse->setText(QCoreApplication::translate("MainWindow", "Unirse", nullptr));
         actionCrear->setText(QCoreApplication::translate("MainWindow", "Crear", nullptr));
-        connectBtn->setText(QCoreApplication::translate("MainWindow", "Conectar", nullptr));
-        seeImageBtn->setText(QCoreApplication::translate("MainWindow", "imagen", nullptr));
         card00->setText(QString());
         card01->setText(QString());
         card02->setText(QString());
         card03->setText(QString());
         card04->setText(QString());
-        pushButton->setText(QString());
         card10->setText(QString());
         card11->setText(QString());
         card12->setText(QString());
@@ -2754,7 +2733,6 @@ public:
         card35->setText(QString());
         card45->setText(QString());
         label->setText(QCoreApplication::translate("MainWindow", ":", nullptr));
-        pushButton_2->setText(QCoreApplication::translate("MainWindow", "PushButton", nullptr));
         playerNameLabel->setText(QCoreApplication::translate("MainWindow", "Jugador", nullptr));
         enemyNameLabel->setText(QCoreApplication::translate("MainWindow", "Enemigo", nullptr));
         infoGameLabel->setText(QCoreApplication::translate("MainWindow", "Info.", nullptr));
