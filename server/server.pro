@@ -18,7 +18,6 @@ SOURCES += \
     card.cpp \
     game.cpp \
     linkedcard.cpp \
-    linkedlist.cpp \
     main.cpp \
     mainwindow.cpp \
     memory.cpp \
@@ -28,7 +27,6 @@ HEADERS += \
     card.h \
     game.h \
     linkedcard.h \
-    linkedlist.h \
     mainwindow.h \
     memory.h \
     server.h

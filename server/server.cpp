@@ -1,10 +1,20 @@
 #include "server.h"
 
+/**
+ * @brief Construct a new Server:: Server object
+ * 
+ */
 Server::Server()
 {
 
 }
 
+/**
+ * @brief Escribe el último mensaje recibido en una variable.
+ * 
+ * @param message mensage.
+ * @param len tamaño de mensaje.
+ */
 void Server::writeLastMessage (char message[], int len) {
     memset(lastMessage, 0, len);
     for (int i = 0; i < len; i++) {
@@ -24,6 +34,10 @@ char* Server::getName() {
     return name;
 }
 
+/**
+ * @brief limpia la variable de nombre.
+ * 
+ */
 void Server::clearName() {
     memset(name, 0, 1024);
 }
@@ -44,6 +58,11 @@ void Server::setClientPowerUpSelected(int value) {
     clientPowerUp = value;
 }
 
+/**
+ * @brief Interpreta los mensajes recibidos para realizar su respectiva acción.
+ * 
+ * @param i jugador.
+ */
 void Server::understandMessage(int i) {
     const char *message1 = "name";
     const char *message2 = "card";
@@ -89,6 +108,12 @@ void Server::understandMessage(int i) {
     }
 }
 
+/**
+ * @brief Realiza una lectura de los jugadores.
+ * 
+ * @param i jugador.
+ * @return int 
+ */
 int Server::readClient(int i) {
     char buffer[1024];
     int bufferLen = 1024;
@@ -108,6 +133,11 @@ int Server::readClient(int i) {
     }
 }                         
 
+/**
+ * @brief Acepta y agrega a los clientes que se van a conectar.
+ * 
+ * @return int 
+ */
 int Server::acceptSocket() {
     socklen_t clilen = sizeof(client1);
     for (int i = 0; i < 2; i++) {
@@ -119,6 +149,11 @@ int Server::acceptSocket() {
     return 0;
 }
 
+/**
+ * @brief Realiza una solicitud a los sockets de Windows para crear uno nuevo.
+ * 
+ * @return int 
+ */
 int Server::wsaCreate() {
     int num = WSAStartup(MAKEWORD(2,2), &WsaData);
     if (num != 0){
@@ -128,6 +163,11 @@ int Server::wsaCreate() {
     return num;
 }
 
+/**
+ * @brief Crea un socket que escucha a los clientes.
+ * 
+ * @return int 
+ */
 int Server::createServerSocket() {
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == INVALID_SOCKET) {
@@ -138,6 +178,11 @@ int Server::createServerSocket() {
     return num;
 }
 
+/**
+ * @brief Realiza la dirección correcta para la conexión de nuevos sockets.
+ * 
+ * @return int 
+ */
 int Server::addressCreate() {
     memset(&server1, 0, sizeof(server1));
     server1.sin_family = AF_INET;
@@ -146,6 +191,11 @@ int Server::addressCreate() {
     return 0;
 };
 
+/**
+ * @brief Asocia el socket del servidor con los servicios del servidor.
+ * 
+ * @return int 
+ */
 int Server::bindServerSocket() {
     num = bind(serverSocket, (struct sockaddr *)&server1, sizeof(server1));
     if (num < 0) {
@@ -156,6 +206,11 @@ int Server::bindServerSocket() {
     return num;
 }
 
+/**
+ * @brief Crea una escucha del socket del servidor.
+ * 
+ * @return int 
+ */
 int Server::listenServerSocket() {
     num = listen(serverSocket, 10);
     if (num < 0) {
@@ -167,11 +222,15 @@ int Server::listenServerSocket() {
 }
 
 
-
 char* Server::getLastMessage() {
     return lastMessage;
 }
 
+/**
+ * @brief Realiza los preparativos para inicializar el servidor.
+ * 
+ * @return int 
+ */
 int Server::startServer() {
     wsaCreate();
     createServerSocket();
@@ -187,18 +246,41 @@ int Server::startServer() {
     return 0;
 }
 
+/**
+ * @brief Envía un mensaje a un cliente.
+ * 
+ * @param message mensaje
+ * @param client cliente
+ */
 void Server::sendMessage(const char* message, int client) {
     num = send(clients[client], message, strlen(message), 0);
 }
 
+/**
+ * @brief Envía un mensaje a un cliente.
+ * 
+ * @param message mensaje, cliente.
+ * @param client 
+ */
 void Server::sendMessage(char *message, int client) {
     num = send(clients[client], message, strlen(message), 0);
 }
 
+/**
+ * @brief Envía un mensaje a un cliente.
+ * 
+ * @param message mensaje.
+ * @param client cliente.
+ * @param size tamaño del mensaje.
+ */
 void Server::sendMessage(char *message, int client, int size) {
     num = send(clients[client], message, size, 0);
 }
 
+/**
+ * @brief Realiza una limpieza al último mensaje.
+ * 
+ */
 void Server::setZeroesLastMessage() {
     memset(&lastMessage, 0, sizeof(lastMessage));
 }

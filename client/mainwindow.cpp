@@ -363,6 +363,9 @@ void MainWindow::waitEnemyCardSelected() {
     }
 }
 
+/**
+ * @brief Espera el puntaje obtenido por el oponente.
+ */
 void MainWindow::waitEnemyPoints() {
     while (1) {
         while (client->getPlayerPoints() != 1) {
@@ -417,6 +420,7 @@ void MainWindow::cardSelectedSystem(int card) {
             if (cardsSelected == 0) {
                 lastCardSelected[0] = x;
                 lastCardSelected[1] = y;
+                setPUEnabled(false);
             } else {
                 lastCardSelected2[0] = x;
                 lastCardSelected2[1] = y;
@@ -435,6 +439,10 @@ void MainWindow::cardSelectedSystem(int card) {
     }
 }
 
+/**
+ * @brief Habilita o deshabilita los botones de los powerups.
+ * @param valor.
+ */
 void MainWindow::setPUEnabled(bool value) {
     QPushButton *puButtons[3] = {ui->pu1, ui->pu2, ui->pu3};
     if (value) {
@@ -451,7 +459,9 @@ void MainWindow::setPUEnabled(bool value) {
 }
 
 
-
+/**
+ * @brief Función que hace la acción del botón del primer powerup.
+ */
 void MainWindow::on_pu1_clicked()
 {
     client->sendMessage("pu1", 3);
@@ -460,6 +470,9 @@ void MainWindow::on_pu1_clicked()
 
 }
 
+/**
+ * @brief Función que hace la acción del botón del segundo powerup.
+ */
 void MainWindow::on_pu2_clicked()
 {
     client->sendMessage("pu2", 3);
@@ -467,6 +480,9 @@ void MainWindow::on_pu2_clicked()
     availablePU[1]--;
 }
 
+/**
+ * @brief Función que hace la acción del botón del tercer powerup.
+ */
 void MainWindow::on_pu3_clicked()
 {
     client->sendMessage("pu3", 3);
@@ -484,170 +500,262 @@ void MainWindow::on_card00_clicked()
     cardSelectedSystem(0);
 }
 
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 01.
+ *
+ */
 void MainWindow::on_card01_clicked()
 {
     cardSelectedSystem(1);
 }
 
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 02.
+ *
+ */
 void MainWindow::on_card02_clicked()
 {
     cardSelectedSystem(2);
 }
 
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 03.
+ *
+ */
 void MainWindow::on_card03_clicked()
 {
     cardSelectedSystem(3);
 }
 
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 04.
+ *
+ */
 void MainWindow::on_card04_clicked()
 {
     cardSelectedSystem(4);
 }
 
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 05.
+ *
+ */
 void MainWindow::on_card05_clicked()
 {
     cardSelectedSystem(5);
 }
 
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 10.
+ *
+ */
 void MainWindow::on_card10_clicked()
 {
     cardSelectedSystem(10);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 11.
+ *
+ */
 void MainWindow::on_card11_clicked()
 {
     cardSelectedSystem(11);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 12.
+ *
+ */
 void MainWindow::on_card12_clicked()
 {
     cardSelectedSystem(12);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 13.
+ *
+ */
 void MainWindow::on_card13_clicked()
 {
     cardSelectedSystem(13);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 14.
+ *
+ */
 void MainWindow::on_card14_clicked()
 {
     cardSelectedSystem(14);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 15.
+ *
+ */
 void MainWindow::on_card15_clicked()
 {
     cardSelectedSystem(15);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 20.
+ *
+ */
 void MainWindow::on_card20_clicked()
 {
     cardSelectedSystem(20);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 21.
+ *
+ */
 void MainWindow::on_card21_clicked()
 {
     cardSelectedSystem(21);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 22.
+ *
+ */
 void MainWindow::on_card22_clicked()
 {
     cardSelectedSystem(22);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 23.
+ *
+ */
 void MainWindow::on_card23_clicked()
 {
     cardSelectedSystem(23);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 24.
+ *
+ */
 void MainWindow::on_card24_clicked()
 {
     cardSelectedSystem(24);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 25.
+ *
+ */
 void MainWindow::on_card25_clicked()
 {
     cardSelectedSystem(25);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 30.
+ *
+ */
 void MainWindow::on_card30_clicked()
 {
     cardSelectedSystem(30);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 31.
+ *
+ */
 void MainWindow::on_card31_clicked()
 {
     cardSelectedSystem(31);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 32.
+ *
+ */
 void MainWindow::on_card32_clicked()
 {
     cardSelectedSystem(32);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 33.
+ *
+ */
 void MainWindow::on_card33_clicked()
 {
     cardSelectedSystem(33);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 34.
+ *
+ */
 void MainWindow::on_card34_clicked()
 {
     cardSelectedSystem(34);
 }
 
-
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 35.
+ *
+ */
 void MainWindow::on_card35_clicked()
 {
     cardSelectedSystem(35);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 40.
+ *
+ */
 void MainWindow::on_card40_clicked()
 {
     cardSelectedSystem(40);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 41.
+ *
+ */
 void MainWindow::on_card41_clicked()
 {
     cardSelectedSystem(41);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 42.
+ *
+ */
 void MainWindow::on_card42_clicked()
 {
     cardSelectedSystem(42);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 43.
+ *
+ */
 void MainWindow::on_card43_clicked()
 {
     cardSelectedSystem(43);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 44.
+ *
+ */
 void MainWindow::on_card44_clicked()
 {
     cardSelectedSystem(44);
 }
 
-
+/**
+ * @brief Indicación de la seleción de una tarjeta en la ubicación 45.
+ *
+ */
 void MainWindow::on_card45_clicked()
 {
     cardSelectedSystem(45);

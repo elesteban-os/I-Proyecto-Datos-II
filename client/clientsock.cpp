@@ -150,18 +150,34 @@ void clientSock::understandMessage() {
     }
 }
 
+/**
+ * @brief Obtiene el jugador en el cuál se le actualiza el puntaje.
+ * @return jugador.
+ */
 int clientSock::getPlayerPoints() {
     return playerPoints;
 }
 
+/**
+ * @brief Coloca un valor al jugador del puntaje.
+ * @param valor.
+ */
 void clientSock::setPlayerPoints(int value) {
     playerPoints = value;
 }
 
+/**
+ * @brief Obtiene el puntaje de un jugador.
+ * @return puntaje.
+ */
 int clientSock::getPoints() {
     return points;
 }
 
+/**
+ * @brief Coloca un número en los puntajes.
+ * @param puntaje.
+ */
 void clientSock::setPoints(int value) {
     points = value;
 }

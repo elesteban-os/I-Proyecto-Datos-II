@@ -2,23 +2,35 @@
 #include "card.h"
 #include "linkedlist.h"
 
+/**
+ * @brief Constructor Memory::Memory
+ */
 Memory::Memory() {
     this->pageHit = 0;
     this->pageFault = 0;
 
 }
 
+/**
+ * @brief Función que obtiene la memoria en uso de la aplicación.
+ */
 void Memory::memoryUsage() {
     GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
     currentMemoryUsage = pmc.WorkingSetSize;
 }
 
+/**
+ * @brief Función que retorna la memoria en uso.
+ * @return memoria en uso.
+ */
 int Memory::getCurrentMemoryUsage() {
     memoryUsage();
     return currentMemoryUsage;
 }
 
-
+/**
+ * @brief Hace una matriz aleatoria de las identificaciones de las tarjetas.
+ */
 void Memory::randomCards() {
     if (noRandomTurns == 0) {
         int i = 0;
@@ -86,6 +98,9 @@ void Memory::randomCards() {
 
 }
 
+/**
+ * @brief Inicia el servidor y realiza preparativos antes de iniciar el juego.
+ */
 void Memory::startGame() {
     randomCards();
     initInMemoryCards();
@@ -94,6 +109,9 @@ void Memory::startGame() {
     tNames.detach();
 }
 
+/**
+ * @brief Cambia el turno entre jugadores.
+ */
 void Memory::changeTurn() {
     if (game->getTurn() == 0) {
         game->setTurn(1);
@@ -106,6 +124,10 @@ void Memory::changeTurn() {
 
 }
 
+/**
+ * @brief Carga una nueva tarjeta en memoria.
+ * @param id identificación de la tarjeta.
+ */
 void Memory::newCard(int id) {
     qDebug() << "newCard" << id;
     const char* cardAddr;
@@ -155,6 +177,13 @@ void Memory::newCard(int id) {
     qDebug() << "add" << id;
 }
 
+/**
+ * @brief Obtiene una tarjeta que esté cargada en memoria si fuese el caso. En otro caso cargará la tarjeta en memoria.
+ * 
+ * @param x posición en x.
+ * @param y posición en y.
+ * @return char array de la imagen de la tarjeta. 
+ */
 char* Memory::getAnyCard(int x, int y) {
     int searchID = cardsMatrix[x][y];
     cardsSelected++;
@@ -182,6 +211,13 @@ char* Memory::getAnyCard(int x, int y) {
     }
 }
 
+/**
+ * @brief Envía un indicador a un jugador.
+ * 
+ * @param player jugador.
+ * @param indicator indicador.
+ * @param button posición del botón.
+ */
 void Memory::sendEnemyOneIndicator(int player, int indicator, int button) {
     QImage image(adressIndicator[indicator]);
     int size = image.sizeInBytes();
@@ -205,6 +241,12 @@ void Memory::sendEnemyOneIndicator(int player, int indicator, int button) {
     }
 }
 
+/**
+ * @brief Envía un indicador a un jugador.
+ * 
+ * @param player jugador.
+ * @param indicator indicador.
+ */
 void Memory::sendPlayerOneIndicator(int player, int indicator) {
     QImage image(adressIndicator[indicator]);
     int size = image.sizeInBytes();
@@ -218,6 +260,12 @@ void Memory::sendPlayerOneIndicator(int player, int indicator) {
     sleep_for(std::chrono::milliseconds(50));
 }
 
+/**
+ * @brief Envía el resultado de la elección de las tarjetas.
+ * 
+ * @param result resultado.
+ * @param player jugador.
+ */
 void Memory::sendResult(bool result, int player) {
     if (result) {
         sendPlayerOneIndicator(player, 1);
@@ -244,6 +292,10 @@ void Memory::sendResult(bool result, int player) {
     changeTurn();
 }
 
+/**
+ * @brief Recalcula las tarjetas que pueden estar en memoria.
+ * 
+ */
 void Memory::recalculateInMemoryCards() {
     int newMaxCards = inGameCards / 3;
     if (newMaxCards > 0) {
@@ -255,6 +307,12 @@ void Memory::recalculateInMemoryCards() {
     qDebug() << maxMemoryCards << "en memoria" << inGameCards << "en juego";
 }
 
+/**
+ * @brief Verifica si el par elegido es el correcto.
+ * 
+ * @param x posición en x.
+ * @param y posición en y.
+ */
 void Memory::verifyPair(int x, int y) {
     sleep_for(std::chrono::milliseconds(1000));
     if (cardSelected1 == cardSelected2) {
@@ -274,6 +332,11 @@ void Memory::verifyPair(int x, int y) {
     }
 }
 
+/**
+ * @brief Envía puntaje obtiendo a un jugador.
+ * 
+ * @param player jugador.
+ */
 void Memory::sendPoints(int player) {
     int points = 20;
     if (pageHitCard) {
@@ -305,8 +368,11 @@ void Memory::sendPoints(int player) {
     }
 }
 
-
-
+/**
+ * @brief Guarda los botones que un jugador selecciona.
+ * 
+ * @param button posición del botón.
+ */
 void Memory::lastClientsButtons(int button) {
     if (buttonsSelected[0] == -1) {
         buttonsSelected[0] = button;
@@ -316,6 +382,12 @@ void Memory::lastClientsButtons(int button) {
 
 }
 
+/**
+ * @brief envía una carta que un jugador está esperando.
+ * 
+ * @param image imágen de la tarjeta.
+ * @param clientPetition cliente que necesita la tarjeta.
+ */
 void Memory::sendPlayersCard(char* image, int clientPetition) {
     server->sendMessage("card", clientPetition, 4);
     sleep_for(std::chrono::milliseconds(10));
@@ -351,6 +423,10 @@ void Memory::sendPlayersCard(char* image, int clientPetition) {
     }
 }
 
+/**
+ * @brief Obtiene las tarjetas que un jugador selecciona.
+ * 
+ */
 void Memory::getCardsPetition() {
     int x = 0;
     int y = 0;
@@ -379,6 +455,10 @@ void Memory::getCardsPetition() {
     }
 }
 
+/**
+ * @brief Realiza los preparativos del inicio de la partida.
+ * 
+ */
 void Memory::gameInitAlgorithm() {
     game->setPlaying(true);
     std::thread tCards(&Memory::getCardsPetition, this);
@@ -399,6 +479,10 @@ void Memory::gameInitAlgorithm() {
 }
 
 // Se debe enviar a todos los clientes.
+/**
+ * @brief Envía indicadores de tarjetas a los jugadores.
+ * 
+ */
 void Memory::sendQuestionImages() {
     //sleep_for(std::chrono::milliseconds(700));
     QImage image(adressIndicator[0]);
@@ -419,6 +503,10 @@ void Memory::sendQuestionImages() {
 
 }
 
+/**
+ * @brief Intercambian los nombres entre clientes.
+ * 
+ */
 void Memory::sendPlayersName() {
     server->sendMessage("enemyName", 0, 9);
     sleep_for(std::chrono::milliseconds(10));
@@ -433,6 +521,10 @@ void Memory::sendPlayersName() {
     sendQuestionImages();
 }
 
+/**
+ * @brief Obtiene los nombres de los jugadores.
+ * 
+ */
 void Memory::getNames() {
     for (int i = 0; i < 2; i++) {
         while (!server->getNewNameBool()) {
@@ -453,8 +545,13 @@ void Memory::getNames() {
     sendPlayersName();
 }
 
-
-
+/**
+ * @brief Crea una información con un array para mostrar cartas en memoria o en disco.
+ * 
+ * @param buffer dirección del array en la que se almacena.
+ * @param ids identificaciones.
+ * @param size tamaño del array de identificaciones.
+ */
 void Memory::createCardsInfo(char* buffer, int* ids, int size) {
     char IDchar[5];
     for (int i = 0; i < size; i++) {
@@ -467,6 +564,10 @@ void Memory::createCardsInfo(char* buffer, int* ids, int size) {
 
 }
 
+/**
+ * @brief Crea información de las cartas que se encuentran en disco.
+ * 
+ */
 void Memory::createInDiscCardsInfo() {
     memset(&inDiscCardsInfo, 0, 20);
     int size = inMemoryCards.getSize();
@@ -485,6 +586,10 @@ void Memory::createInDiscCardsInfo() {
     //printf("%d", IDarray);
 }
 
+/**
+ * @brief Crea información de las cartas que se encuentran en memoria.
+ * 
+ */
 void Memory::createInMemoryCardsInfo() {
     memset(&inMemoryCardsInfo, 0, 20);
     int ID;
@@ -497,6 +602,10 @@ void Memory::createInMemoryCardsInfo() {
     createCardsInfo(inMemoryCardsInfo, IDarray, cardsSize);
 }
 
+/**
+ * @brief Inicializa las tarjetas que están en memoria.
+ * 
+ */
 void Memory::initInMemoryCards() {
     int size = 0;
     for(int i = 0; i < maxMemoryCards; i++) {
@@ -510,6 +619,10 @@ void Memory::initInMemoryCards() {
     createInMemoryCardsInfo();
 }
 
+/**
+ * @brief Obtiene los powerUps que los jugadores seleccionan y realiza la acción del powerUp.
+ * 
+ */
 void Memory::powerUpsListener() {
     while(game->getPlaying()) {
         while(server->getPowerUpSelected() == 0) {
@@ -535,6 +648,10 @@ void Memory::powerUpsListener() {
     }
 }
 
+/**
+ * @brief Realiza las funciones del powerUp1.
+ * 
+ */
 void Memory::powerUp1() {
     bool ready = false;
     int correct = rand() % 15;
@@ -576,37 +693,72 @@ void Memory::powerUp1() {
     }
 }
 
+/**
+ * @brief Realiza las funciones del powerUp2.
+ * 
+ */
 void Memory::powerUp2() {
     noRandomTurns = 4;
 }
 
+/**
+ * @brief Realiza las funciones del powerUp3.
+ * 
+ */
 void Memory::powerUp3() {
     doublePointsPU = true;
 }
 
-
-
+/**
+ * @brief Obtiene la información de las tarjetas que están en memoria.
+ * 
+ * @return char array de las tarjetas que están en memoria.
+ */
 char* Memory::getInMemoryCardsInfo() {
     return inMemoryCardsInfo;
 }
 
+/**
+ * @brief Obtiene la información de las tarjetas que están en disco.
+ * 
+ * @return char array de las tarjetas que están en disco.
+ */
 char* Memory::getInDiscCardsInfo() {
     return inDiscCardsInfo;
 }
 
+/**
+ * @brief Obtiene el número de page faults acumulados.
+ * 
+ * @return entero de la cantidad de page faults.
+ */
 int Memory::getPageFault() {
     return pageFault;
 }
 
+/**
+ * @brief Obtiene el número de page hits acumulados.
+ * 
+ * @return entero de la cantidad de page hits.
+ */
 int Memory::getPageHit() {
     return pageHit;
 }
 
-
+/**
+ * @brief Retorna el servidor.
+ * 
+ * @return servidor.
+ */
 Server* Memory::getServer() {
     return this->server;
 }
 
+/**
+ * @brief Retorna la instancia "juego".
+ * 
+ * @return juego.
+ */
 Game* Memory::getGame() {
     return this->game;
 }
