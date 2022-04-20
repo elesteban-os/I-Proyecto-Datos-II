@@ -39,6 +39,8 @@ public:
     void getNewCardIndicator();
     void cardSelectedSystem(int card);
     void timeHelper();
+    void waitEnemyPoints();
+    void setPUEnabled(bool value);
 
 private slots:
     void on_actionUnirse_triggered();
@@ -103,6 +105,12 @@ private slots:
 
     void on_card45_clicked();
 
+    void on_pu1_clicked();
+
+    void on_pu2_clicked();
+
+    void on_pu3_clicked();
+
 private:
     Ui::MainWindow *ui;
     clientSock *client;
@@ -112,6 +120,7 @@ private:
     int timeMin0x = 0;
     int timeMinx0 = 0;
     int cardsSelected = 0;
+    int lastNumCardSelected = -1;
     int lastCardSelected[2] = {-1, -1};
     int lastCardSelected2[2] = {-1, -1};
     bool enabledButtons[5][6] = {{1, 1, 1, 1, 1, 1},
@@ -119,6 +128,7 @@ private:
                                  {1, 1, 1, 1, 1, 1},
                                  {1, 1, 1, 1, 1, 1},
                                  {1, 1, 1, 1, 1, 1}};
+    int availablePU[3] = {2, 2, 2};
 
 };
 #endif // MAINWINDOW_H

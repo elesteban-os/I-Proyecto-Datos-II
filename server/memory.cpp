@@ -5,6 +5,7 @@
 Memory::Memory() {
     this->pageHit = 0;
     this->pageFault = 0;
+
 }
 
 void Memory::memoryUsage() {
@@ -19,50 +20,57 @@ int Memory::getCurrentMemoryUsage() {
 
 
 void Memory::randomCards() {
-    int i = 0;
-    int j = 0;
-    int completeIndex = 0; 
-    int randomNum = 0;
-    int readyNums[15];
-    for (int i = 0; i < 15; i++) {
-        if (availableCards[i]) {
-            readyNums[i] = 0;
-        } else {
-            completeIndex++;
-            readyNums[i] = 2;
-        }
-        
-    }
-    while (completeIndex != 15) {
-        randomNum = rand() % 15;
-        while (readyNums[randomNum] == 2) {
-            randomNum++;
-            if (randomNum == 15) {
-                randomNum = 0;
-            }
-        }
-        readyNums[randomNum]++;
-        if (readyNums[randomNum] == 2) {
-            completeIndex++;
-        }
-        bool ready = false;
-        while (!ready) {
-            if (j == 6) {
-                i++;
-                j = 0;
-            }
-            if (availableButtons[i][j]) {
-                cardsMatrix[i][j] = randomNum;
-                j++; 
-                ready = true;
+    if (noRandomTurns == 0) {
+        int i = 0;
+        int j = 0;
+        int completeIndex = 0;
+        int randomNum = 0;
+        int readyNums[15];
+        srand(time(0));
+        for (int i = 0; i < 15; i++) {
+            if (availableCards[i]) {
+                readyNums[i] = 0;
             } else {
-                cardsMatrix[i][j] = -1;
-                j++;
+                completeIndex++;
+                readyNums[i] = 2;
             }
-            
+
         }
-         
+        while (completeIndex != 15) {
+            randomNum = rand() % 15;
+            while (readyNums[randomNum] == 2) {
+                randomNum++;
+                if (randomNum == 15) {
+                    randomNum = 0;
+                }
+            }
+            readyNums[randomNum]++;
+            if (readyNums[randomNum] == 2) {
+                completeIndex++;
+            }
+            bool ready = false;
+            while (!ready) {
+                if (j == 6) {
+                    i++;
+                    j = 0;
+                }
+                if (availableButtons[i][j]) {
+                    cardsMatrix[i][j] = randomNum;
+                    j++;
+                    ready = true;
+                } else {
+                    cardsMatrix[i][j] = -1;
+                    j++;
+                }
+
+            }
+
+        }
+
+    } else {
+        noRandomTurns -= 1;
     }
+
 
     QString text;
     for (int i = 0; i < 5; i++) {
@@ -105,12 +113,38 @@ void Memory::newCard(int id) {
         cardAddr = "images/0.jpg";
     } else if (id == 1) {
         cardAddr = "images/1.jpg";
+    } else if (id == 2) {
+        cardAddr = "images/2.jpg";
+    } else if (id == 3) {
+        cardAddr = "images/3.jpg";
+    } else if (id == 4) {
+        cardAddr = "images/4.jpg";
+    } else if (id == 5) {
+        cardAddr = "images/5.jpg";
+    } else if (id == 6) {
+        cardAddr = "images/6.jpg";
+    } else if (id == 7) {
+        cardAddr = "images/7.jpg";
+    } else if (id == 8) {
+        cardAddr = "images/8.jpg";
+    } else if (id == 9) {
+        cardAddr = "images/9.jpg";
+    } else if (id == 10) {
+        cardAddr = "images/10.jpg";
+    } else if (id == 11) {
+        cardAddr = "images/11.jpg";
+    } else if (id == 12) {
+        cardAddr = "images/12.jpg";
+    } else if (id == 13) {
+        cardAddr = "images/13.jpg";
+    } else if (id == 14) {
+        cardAddr = "images/14.jpg";
     } else {
         cardAddr = adressCards[id];
     }
     QImage image(cardAddr);
 
-    qDebug() << "image";
+    qDebug() << "image" << id;
 
     int size = image.sizeInBytes();
     char data[size];
@@ -136,6 +170,9 @@ char* Memory::getAnyCard(int x, int y) {
     char* data = inMemoryCards.getDataByID(searchID);
     if (data != NULL) {
         pageHit++;
+        if (cardsSelected == 1) {
+            pageHitCard = true;
+        }
         return data;
     } else {
         inMemoryCards.deleteLastData();
@@ -207,6 +244,17 @@ void Memory::sendResult(bool result, int player) {
     changeTurn();
 }
 
+void Memory::recalculateInMemoryCards() {
+    int newMaxCards = inGameCards / 3;
+    if (newMaxCards > 0) {
+        while (newMaxCards != maxMemoryCards) {
+            inMemoryCards.deleteLastData();
+            maxMemoryCards--;
+        }
+    }
+    qDebug() << maxMemoryCards << "en memoria" << inGameCards << "en juego";
+}
+
 void Memory::verifyPair(int x, int y) {
     sleep_for(std::chrono::milliseconds(1000));
     if (cardSelected1 == cardSelected2) {
@@ -215,11 +263,49 @@ void Memory::verifyPair(int x, int y) {
         availableButtons[x][y] = 0;
         availableButtons[firstButtonsSelected[0]][firstButtonsSelected[1]] = 0;
         availableCards[cardSelected1] = 0;
+        sendPoints(server->getClientPetition());
+        pageHitCard = false;
+        inGameCards--;
+        recalculateInMemoryCards();
     } else {
+        doublePointsPU = false;
         server->sendMessage("incorrect", server->getClientPetition(), 9);
         sendResult(false, server->getClientPetition());
     }
 }
+
+void Memory::sendPoints(int player) {
+    int points = 20;
+    if (pageHitCard) {
+        points *= 2;
+    }
+    if (doublePointsPU) {
+        points *= 2;
+        doublePointsPU = false;
+    }
+    game->addScore(player, points);
+    int score = game->getScore(player);
+    sleep_for(std::chrono::milliseconds(10));
+    if (player == 0) {
+        server->sendMessage("playerPoints", 0, 12);
+        sleep_for(std::chrono::milliseconds(10));
+        server->sendMessage(" ", 0, score);
+        sleep_for(std::chrono::milliseconds(10));
+        server->sendMessage("enemyPoints", 1, 11);
+        sleep_for(std::chrono::milliseconds(10));
+        server->sendMessage(" ", 1, score);
+    } else {
+        server->sendMessage("playerPoints", 1, 12);
+        sleep_for(std::chrono::milliseconds(10));
+        server->sendMessage(" ", 1, score);
+        sleep_for(std::chrono::milliseconds(10));
+        server->sendMessage("enemyPoints", 0, 11);
+        sleep_for(std::chrono::milliseconds(10));
+        server->sendMessage(" ", 0, score);
+    }
+}
+
+
 
 void Memory::lastClientsButtons(int button) {
     if (buttonsSelected[0] == -1) {
@@ -297,14 +383,18 @@ void Memory::gameInitAlgorithm() {
     game->setPlaying(true);
     std::thread tCards(&Memory::getCardsPetition, this);
     tCards.detach();
+    std::thread tPU(&Memory::powerUpsListener, this);
+    tPU.detach();
     server->sendMessage("started", 0, 7);
     sleep_for(std::chrono::milliseconds(10));
     server->sendMessage("started", 1, 7);
     sleep_for(std::chrono::milliseconds(10));
+    srand(time(0));
+    int random = rand() % 2;
+    game->setTurn(random);
     if (game->getPlaying()) {
-        if (game->getTurn() == 0) {
-            server->sendMessage("turn", 0, 4);
-        }
+        sleep_for(std::chrono::milliseconds(100));
+        server->sendMessage("turn", random, 4);
     }
 }
 
@@ -419,6 +509,82 @@ void Memory::initInMemoryCards() {
     }
     createInMemoryCardsInfo();
 }
+
+void Memory::powerUpsListener() {
+    while(game->getPlaying()) {
+        while(server->getPowerUpSelected() == 0) {
+            sleep_for(std::chrono::milliseconds(50));
+        }
+        switch (server->getPowerUpSelected()) {
+            case 1:
+                powerUp1();
+                server->setPowerUpSelected(0);
+                server->setClientPowerUpSelected(-1);
+                break;
+            case 2:
+                powerUp2();
+                server->setPowerUpSelected(0);
+                server->setClientPowerUpSelected(-1);
+                break;
+            case 3:
+                powerUp3();
+                server->setPowerUpSelected(0);
+                server->setClientPowerUpSelected(-1);
+                break;
+        }
+    }
+}
+
+void Memory::powerUp1() {
+    bool ready = false;
+    int correct = rand() % 15;
+    int correct2 = rand() % 15;
+    bool correctTurn = false;
+    while (!availableCards[correct]) {
+        correct++;
+        if (correct == 15) {
+            correct = 0;
+        }
+    }
+    while (!availableCards[correct2]) {
+        correct2++;
+        if (correct2 == 15) {
+            correct2 = 0;
+        }
+    }
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 6; j++) {
+            if (correctTurn) {
+                cardsMatrix[i][j] = correct;
+                correctTurn = rand() % 2;
+            } else {
+                cardsMatrix[i][j] = correct2;
+                correctTurn = rand() % 2;
+            }
+        }
+    }
+    QString text;
+    for (int i = 0; i < 5; i++) {
+        text.append("[");
+        for (int j = 0; j < 6; j++) {
+            text.append(QString::number(cardsMatrix[i][j]));
+            text.append(", ");
+        }
+        text.append("]");
+        qDebug() << text;
+        text = "";
+    }
+}
+
+void Memory::powerUp2() {
+    noRandomTurns = 4;
+}
+
+void Memory::powerUp3() {
+    doublePointsPU = true;
+}
+
+
 
 char* Memory::getInMemoryCardsInfo() {
     return inMemoryCardsInfo;

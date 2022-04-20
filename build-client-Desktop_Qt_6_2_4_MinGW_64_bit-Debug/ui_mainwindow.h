@@ -69,6 +69,9 @@ public:
     QLabel *enemyNameLabel;
     QLabel *infoGameLabel;
     QLCDNumber *enemyPoints;
+    QPushButton *pu1;
+    QPushButton *pu2;
+    QPushButton *pu3;
     QMenuBar *menubar;
     QMenu *menuJuego;
     QStatusBar *statusbar;
@@ -2678,6 +2681,21 @@ public:
         enemyPoints->setFrameShape(QFrame::NoFrame);
         enemyPoints->setMode(QLCDNumber::Dec);
         enemyPoints->setSegmentStyle(QLCDNumber::Flat);
+        pu1 = new QPushButton(centralwidget);
+        pu1->setObjectName(QString::fromUtf8("pu1"));
+        pu1->setEnabled(false);
+        pu1->setGeometry(QRect(180, 590, 80, 24));
+        pu1->setCursor(QCursor(Qt::PointingHandCursor));
+        pu2 = new QPushButton(centralwidget);
+        pu2->setObjectName(QString::fromUtf8("pu2"));
+        pu2->setEnabled(false);
+        pu2->setGeometry(QRect(277, 590, 80, 24));
+        pu2->setCursor(QCursor(Qt::PointingHandCursor));
+        pu3 = new QPushButton(centralwidget);
+        pu3->setObjectName(QString::fromUtf8("pu3"));
+        pu3->setEnabled(false);
+        pu3->setGeometry(QRect(374, 590, 80, 24));
+        pu3->setCursor(QCursor(Qt::PointingHandCursor));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -2736,6 +2754,9 @@ public:
         playerNameLabel->setText(QCoreApplication::translate("MainWindow", "Jugador", nullptr));
         enemyNameLabel->setText(QCoreApplication::translate("MainWindow", "Enemigo", nullptr));
         infoGameLabel->setText(QCoreApplication::translate("MainWindow", "Info.", nullptr));
+        pu1->setText(QCoreApplication::translate("MainWindow", "50/50", nullptr));
+        pu2->setText(QCoreApplication::translate("MainWindow", "No Random", nullptr));
+        pu3->setText(QCoreApplication::translate("MainWindow", "Doble o nada", nullptr));
         menuJuego->setTitle(QCoreApplication::translate("MainWindow", "Juego", nullptr));
     } // retranslateUi
 

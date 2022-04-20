@@ -30,10 +30,10 @@ public:
     void changePointsInfo();
     void changePagesInfo();
     void logInfo();
+    void getNames();
 
 private slots:
     void on_startServerBtn_clicked();
-    void on_sendImgBtn_clicked();
 
 private:
     Ui::MainWindow *ui;

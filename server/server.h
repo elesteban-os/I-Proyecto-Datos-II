@@ -36,7 +36,8 @@ private:
     char lastMessage[1024];   
     std::thread t; 
     std::thread tacpt;
-
+    int powerUpSelected = 0;
+    int clientPowerUp = -1;
 
     void writeLastMessage(char message[], int len);
     int readClient(int i);
@@ -69,6 +70,11 @@ public:
     bool getNewCardPetition();
     void setNewCardPetition(bool value);
     int getClientPetition();
+
+    int getPowerUpSelected();
+    void setPowerUpSelected(int value);
+    int getClientPowerUp();
+    void setClientPowerUpSelected(int value);
 
 
 };

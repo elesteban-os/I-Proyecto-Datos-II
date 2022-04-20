@@ -13,6 +13,7 @@
 #include "game.h"
 #include <thread>
 #include <QDebug>
+#include <time.h>
 using std::this_thread::sleep_for;
 
 class Memory
@@ -40,8 +41,11 @@ private:
     int cardsSelected = 0;
     int cardSelected1 = -1;
     int cardSelected2 = -1;
+    int noRandomTurns = 0;
     int buttonsSelected[2] = {-1, -1};
     int firstButtonsSelected[2] = {-1, -1};
+    bool pageHitCard = false;
+    bool doublePointsPU = false;
     bool availableButtons[5][6] = {{1, 1, 1, 1, 1, 1},
                                    {1, 1, 1, 1, 1, 1},
                                    {1, 1, 1, 1, 1, 1},
@@ -81,6 +85,15 @@ public:
     void verifyPair(int x, int y);
     void sendPlayersCard(char* image, int clientPetition);
     void changeTurn();
+
+    void sendPoints(int player);
+
+    void powerUpsListener();
+    void powerUp1();
+    void powerUp2();
+    void powerUp3();
+
+    void recalculateInMemoryCards();
 };
 
 #endif // MEMORY_H

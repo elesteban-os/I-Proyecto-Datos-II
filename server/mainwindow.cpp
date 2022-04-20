@@ -5,7 +5,11 @@
 #include "card.h"
 #include <string>
 
-
+/**
+ * @brief Construct a new Main Window:: Main Window object
+ * 
+ * @param parent 
+ */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -13,19 +17,43 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     changeMemoryUsageHelper();
+    ui->startServerBtn->setToolTip("Iniciar servidor");
 }
 
+/**
+ * @brief Destroy the Main Window:: Main Window object
+ * 
+ */
 MainWindow::~MainWindow()
 {
     delete ui;
 
 }
 
+/**
+ * @brief Crea un thread del muestreo de la memoria utilizada.
+ * 
+ */
 void MainWindow::changeMemoryUsageHelper() {
     std::thread tMemory(&MainWindow::changeMemoryUsage, this);
     tMemory.detach();
 }
 
+/**
+ * @brief Obtiene los nombres de los jugadores para mostrarlos en pantalla.
+ */
+void MainWindow::getNames() {
+    while (!memoryManager.getGame()->getPlaying()) {
+        sleep_for(std::chrono::milliseconds(10));
+    }
+    ui->staticName1->setText(memoryManager.getGame()->getPlayer1name());
+    ui->staticName2->setText(memoryManager.getGame()->getPlayer2name());
+}
+
+/**
+ * @brief Crea un thread del muestreo la información del servidor.
+ * 
+ */
 void MainWindow::logInfo() {
     char* logMessage;
     //QTextStream out(stdout);
@@ -36,6 +64,10 @@ void MainWindow::logInfo() {
     }
 }
 
+/**
+ * @brief Cambia el valor en pantalla de la memoria en uso.
+ * 
+ */
 void MainWindow::changeMemoryUsage() {
     int num;
     QString numS;
@@ -48,6 +80,10 @@ void MainWindow::changeMemoryUsage() {
     }
 }
 
+/**
+ * @brief Cambia el valor en pantalla de los page hit y los page fault.
+ * 
+ */
 void MainWindow::changePagesInfo() {
     while (1) {
         ui->pageHit->setText(QString::number(memoryManager.getPageHit()));
@@ -57,6 +93,10 @@ void MainWindow::changePagesInfo() {
 
 }
 
+/**
+ * @brief Cambia el valor en pantalla de las tarjetas en memoria y en disco.
+ * 
+ */
 void MainWindow::inMemoryCardsInfo() {
     while (1) {
         memoryManager.createInMemoryCardsInfo();
@@ -69,6 +109,10 @@ void MainWindow::inMemoryCardsInfo() {
     }
 }
 
+/**
+ * @brief Cambia el valor en pantalla de los puntajes de los jugadores.
+ * 
+ */
 void MainWindow::changePointsInfo() {
     int points[2];
     while (1) {
@@ -82,8 +126,12 @@ void MainWindow::changePointsInfo() {
 
 
 
-
 // Al iniciar el servidor debe iniciar todos los threads de la funciones que deben escuchar y generar las clases puntero de MainWindow.
+
+/**
+ * @brief Realiza todos los preparativos para iniciar el servidor y algunas características del juego.
+ * 
+ */
 void MainWindow::on_startServerBtn_clicked()
 {
     ui->startServerBtn->setEnabled(false);
@@ -101,46 +149,8 @@ void MainWindow::on_startServerBtn_clicked()
     std::thread tPages(&MainWindow::changePagesInfo, this);
     tPages.detach();
 
-    //std::thread tLogInfo(&MainWindow::logInfo, this);
-    //tLogInfo.detach();
+    std::thread tNames(&MainWindow::getNames, this);
+    tNames.detach();
 }
 
-
-void MainWindow::on_sendImgBtn_clicked()
-{
-    // Const char para el array
-    const char *imageName = "images/1.jpg";
-
-    // Char para hacer la tarjeta
-    char namee[10];
-
-    // Copia de memoria a la variable para la tarjeta
-    memcpy(namee, imageName, strlen(imageName));
-
-    // Se puede crear imagenes con const char
-    QImage img2(imageName);
-
-    // Extraer datos de la imagen.
-    int size = img2.sizeInBytes();
-    char data[size];
-    memcpy(data, img2.bits(), size);
-
-    // Creacion de tarjeta
-    card *card1 = new card(data, size, 0);
-
-
-    for (int i = 0; i < 20; i++) {
-        printf("%x", data[i]);
-    }
-
-
-    // Enviar imagen
-    server->sendMessage("newimage\0", 0);
-    server->sendMessage(data, 0, size);
-
-    // Para ver la imagen
-    QImage imgdata((uchar*)card1->getImage(), 100, 100, QImage::Format_ARGB32);
-    QPixmap p(QPixmap::fromImage(imgdata));
-    ui->label1->setPixmap(p);
-}
 

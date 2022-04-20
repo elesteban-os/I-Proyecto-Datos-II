@@ -28,9 +28,28 @@ void Server::clearName() {
     memset(name, 0, 1024);
 }
 
+int Server::getPowerUpSelected() {
+    return powerUpSelected;
+}
+
+void Server::setPowerUpSelected(int value) {
+    this->powerUpSelected = value;
+}
+
+int Server::getClientPowerUp() {
+    return clientPowerUp;
+}
+
+void Server::setClientPowerUpSelected(int value) {
+    clientPowerUp = value;
+}
+
 void Server::understandMessage(int i) {
     const char *message1 = "name";
     const char *message2 = "card";
+    const char *message3 = "pu1";
+    const char *message4 = "pu2";
+    const char *message5 = "pu3";
     memset(buffer, 0, sizeof(buffer));
     //char* token = strtok(lastMessage, " ");
     qDebug() << "LM: \"" << lastMessage << "\"" << "\n";
@@ -55,6 +74,18 @@ void Server::understandMessage(int i) {
         qDebug() << "CardPetition" << cardPetition << "\n";
         newCardPetition = true;
         clientPetition = i;
+    }
+    if (strcmp(lastMessage, message3) == 0) {
+        powerUpSelected = 1;
+        clientPowerUp = i;
+    }
+    if (strcmp(lastMessage, message4) == 0) {
+        powerUpSelected = 2;
+        clientPowerUp = i;
+    }
+    if (strcmp(lastMessage, message5) == 0) {
+        powerUpSelected = 3;
+        clientPowerUp = i;
     }
 }
 

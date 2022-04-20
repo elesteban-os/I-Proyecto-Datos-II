@@ -24,7 +24,7 @@ public:
     char* getData();
     bool getWievedDataReceived();
     bool getPlayable();
-    bool setPlayable(bool value);
+    void setPlayable(bool value);
     void sendMessage(char* message);
     void sendMessage(char* message, int size);
     bool getImgIndBool();
@@ -39,7 +39,6 @@ public:
     void clearData();
     int getCorrect();
     void setCorrect(int value);
-
     bool getEnemyDataReceived();
     void setEnemyDataReceived(bool value);
 
@@ -47,6 +46,11 @@ public:
 
     bool getCorrectEnemyCardSelected();
     void setCorrectEnemyCardSelected(bool value);
+
+    int getPlayerPoints();
+    void setPlayerPoints(int value);
+    int getPoints();
+    void setPoints(int value);
 
 private:
     WSADATA wsaData;
@@ -72,6 +76,10 @@ private:
     bool running = true;
     bool turn = false;
     int correct = -1;
+
+    int playerPoints = -1;
+    int points = -1;
+
     void wsaCreate();
     void createSocket();
     void connectSocket();

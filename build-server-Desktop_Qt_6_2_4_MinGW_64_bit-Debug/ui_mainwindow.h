@@ -29,8 +29,6 @@ public:
     QWidget *centralwidget;
     QPushButton *startServerBtn;
     QPlainTextEdit *logText;
-    QPushButton *sendImgBtn;
-    QLabel *label1;
     QLabel *staticMemoryUsage;
     QLabel *variableMemoryUsage;
     QTableWidget *tableWidget;
@@ -51,21 +49,15 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(471, 702);
+        MainWindow->resize(471, 575);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         startServerBtn = new QPushButton(centralwidget);
         startServerBtn->setObjectName(QString::fromUtf8("startServerBtn"));
-        startServerBtn->setGeometry(QRect(20, 180, 101, 24));
+        startServerBtn->setGeometry(QRect(190, 180, 101, 24));
         logText = new QPlainTextEdit(centralwidget);
         logText->setObjectName(QString::fromUtf8("logText"));
         logText->setGeometry(QRect(20, 20, 431, 141));
-        sendImgBtn = new QPushButton(centralwidget);
-        sendImgBtn->setObjectName(QString::fromUtf8("sendImgBtn"));
-        sendImgBtn->setGeometry(QRect(360, 180, 91, 24));
-        label1 = new QLabel(centralwidget);
-        label1->setObjectName(QString::fromUtf8("label1"));
-        label1->setGeometry(QRect(-10, 560, 161, 171));
         staticMemoryUsage = new QLabel(centralwidget);
         staticMemoryUsage->setObjectName(QString::fromUtf8("staticMemoryUsage"));
         staticMemoryUsage->setGeometry(QRect(180, 210, 131, 31));
@@ -167,8 +159,6 @@ public:
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         startServerBtn->setText(QCoreApplication::translate("MainWindow", "Iniciar Servidor", nullptr));
-        sendImgBtn->setText(QCoreApplication::translate("MainWindow", "Enviar Imagen", nullptr));
-        label1->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
         staticMemoryUsage->setText(QCoreApplication::translate("MainWindow", "Memoria en uso", nullptr));
         variableMemoryUsage->setText(QCoreApplication::translate("MainWindow", "0 Bytes", nullptr));
         QTableWidgetItem *___qtablewidgetitem = tableWidget->horizontalHeaderItem(0);
