@@ -70,6 +70,7 @@ void clientSock::understandMessage() {
     const char* message8 = "enemyCard";
     const char* message9 = "playerPoints";
     const char* message10 = "enemyPoints";
+    const char* message11 = "out";
     memset(&recBuffer, 0, recBufferLen);
     if (strcmp(lastMessage, message1) == 0) {
         qDebug() << "card";
@@ -147,6 +148,9 @@ void clientSock::understandMessage() {
     if (strcmp(lastMessage, message10) == 0) {
         playerPoints = 1;
         points = recv(clientSocket, recBuffer, recBufferLen, 0);    
+    }
+    if (strcmp(lastMessage, message11) == 0) {
+        gameWinner = recv(clientSocket, recBuffer, recBufferLen, 0);    
     }
 }
 
@@ -326,6 +330,10 @@ void clientSock::readServer() {
  */
 char* clientSock::getData() {
     return data;
+}
+
+int clientSock::getGameWinner() {
+    return gameWinner;
 }
 
 /**

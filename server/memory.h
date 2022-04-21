@@ -94,6 +94,7 @@ public:
     void powerUp3();
 
     void recalculateInMemoryCards();
+    void verifyInGameCards();
 };
 
 #endif // MEMORY_H

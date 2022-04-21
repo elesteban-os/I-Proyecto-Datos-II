@@ -40,6 +40,7 @@ public:
     void cardSelectedSystem(int card);
     void timeHelper();
     void waitEnemyPoints();
+    void waitGameWinner();
     void setPUEnabled(bool value);
 
 private slots:
@@ -115,6 +116,7 @@ private:
     Ui::MainWindow *ui;
     clientSock *client;
     Game *game;
+    bool timeFunction = false;
     int timeSec0x = 0;
     int timeSecx0 = 0;
     int timeMin0x = 0;

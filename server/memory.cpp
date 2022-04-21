@@ -292,6 +292,34 @@ void Memory::sendResult(bool result, int player) {
     changeTurn();
 }
 
+void Memory::verifyInGameCards() {
+    if (inGameCards == 0) {
+        int sendToP1 = 0;
+        int sendToP2 = 0;
+        int scoreP1 = game->getScore(0);
+        int scoreP2 = game->getScore(1);
+        if (scoreP1 > scoreP2) {
+            sendToP1 = 1;
+            sendToP2 = 2;
+        } else if (scoreP1 < scoreP2) {
+            sendToP1 = 2;
+            sendToP2 = 1;
+        } else {
+            sendToP1 = 3;
+            sendToP2 = 3;
+        }
+        sleep_for(std::chrono::milliseconds(10));
+        server->sendMessage("out", 0, 3);
+        sleep_for(std::chrono::milliseconds(10));
+        server->sendMessage(" ", 0, sendToP1);
+        sleep_for(std::chrono::milliseconds(10));
+        server->sendMessage("out", 1, 3);
+        sleep_for(std::chrono::milliseconds(10));
+        server->sendMessage(" ", 1, sendToP2);
+
+    }
+}
+
 /**
  * @brief Recalcula las tarjetas que pueden estar en memoria.
  * 
@@ -324,6 +352,7 @@ void Memory::verifyPair(int x, int y) {
         sendPoints(server->getClientPetition());
         pageHitCard = false;
         inGameCards--;
+        verifyInGameCards();
         recalculateInMemoryCards();
     } else {
         doublePointsPU = false;

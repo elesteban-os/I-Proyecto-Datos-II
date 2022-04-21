@@ -44,7 +44,7 @@ void MainWindow::timeHelper() {
  * 
  */
 void MainWindow::time() {
-    while(1) {
+    while(timeFunction) {
         sleep_for(std::chrono::milliseconds(1000));
         if (ui->timeMin01->value() == 9 && ui->timeSec10->value() == 5 && ui->timeSec01->value() == 9) {
             ui->timeMin10->display(ui->timeMin10->value() + 1);
@@ -192,6 +192,28 @@ void MainWindow::on_actionUnirse_triggered()
 
     std::thread tEnemyPoints(&MainWindow::waitEnemyPoints, this);
     tEnemyPoints.detach();
+
+    std::thread tWaitWinner(&MainWindow::waitGameWinner, this);
+    tWaitWinner.detach();
+}
+
+/**
+ * @brief Función que espera el resultado de la partida luego de seleccionar todas las tarjetas en el tablero.
+ */
+void MainWindow::waitGameWinner() {
+    sleep_for(std::chrono::milliseconds(40000));
+    while (client->getGameWinner() == -1) {
+        sleep_for(std::chrono::milliseconds(100));
+    }
+    int winner = client->getGameWinner();
+    if (winner == 1) {
+        ui->infoGameLabel->setText("Ganaste");
+    } else if (winner == 3) {
+        ui->infoGameLabel->setText("Empate");
+    } else {
+        ui->infoGameLabel->setText("Perdiste");
+    }
+    timeFunction = false;
 }
 
 /**
@@ -219,6 +241,8 @@ void MainWindow::gameStarted() {
         sleep_for(std::chrono::milliseconds(200));
     }
     ui->infoGameLabel->setText("Juego iniciado");
+
+    timeFunction = true;
     std::thread tTime(&MainWindow::time, this);
     tTime.detach();
     gameTurn(); 

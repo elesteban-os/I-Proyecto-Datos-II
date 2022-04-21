@@ -52,6 +52,8 @@ public:
     int getPoints();
     void setPoints(int value);
 
+    int getGameWinner();
+
 private:
     WSADATA wsaData;
     int num, num2;
@@ -79,6 +81,8 @@ private:
 
     int playerPoints = -1;
     int points = -1;
+
+    int gameWinner = -1;
 
     void wsaCreate();
     void createSocket();
